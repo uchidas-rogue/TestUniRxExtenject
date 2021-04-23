@@ -6,5 +6,6 @@ using UniRx;
 public interface IModel
 {
     Vector3ReactiveProperty Vec3MoveValueRP { get; set; }
-    void ChangeVec3 (Vector3 Vec3);
+    void ChangeVec3 (float x,float y);
+    public bool CheckKeyInput(float x,float y);
 }

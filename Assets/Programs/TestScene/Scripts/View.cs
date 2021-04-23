@@ -6,6 +6,6 @@ public class View : MonoBehaviour
 {
     public void Move(Vector3 vector3)
     {
-        transform.position += vector3;
+        transform.position = vector3;
     }
 }
