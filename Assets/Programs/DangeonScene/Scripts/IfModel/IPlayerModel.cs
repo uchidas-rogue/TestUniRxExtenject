@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 public interface IPlayerModel
 {
     Vector3ReactiveProperty Vec3PlayerPositionRP { get; set; }
-    void ChangeVec3 (float x,float y);
-    public bool CheckKeyInput(float x,float y);
+    BoolReactiveProperty IsPlayerTurnRP { get; set; }
+    void ChangeVec3 (float x, float y);
+    bool CheckKeyInput ();
 }
