@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7384639952659490866}
   - component: {fileID: 2532317433110050076}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: wallreaf
   m_TagString: Untagged
   m_Icon: {fileID: 0}

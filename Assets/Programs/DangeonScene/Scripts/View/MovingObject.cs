@@ -7,10 +7,12 @@ using UnityEngine;
 /// </summary>
 public abstract class MovingObject : MonoBehaviour
 {
-    public LayerMask blockingLayer;
+    public LayerMask BlockingLayer;
+    public float MoveTime = 0.05f;
+
     private BoxCollider2D boxCollider;
-    public float moveTime = 0.05f;
     private Rigidbody2D rb2d;
+    protected SpriteRenderer spriteRenderer;
     private float inverseMoveTime;
     private Vector2 tmpVec2 = new Vector2 (0, 0);
     private float sqrRemainingDistance = 0;
@@ -19,7 +21,8 @@ public abstract class MovingObject : MonoBehaviour
     {
         this.rb2d = GetComponent<Rigidbody2D> ();
         this.boxCollider = GetComponent<BoxCollider2D> ();
-        this.inverseMoveTime = 1f / moveTime;
+        this.spriteRenderer = GetComponent<SpriteRenderer> ();
+        this.inverseMoveTime = 1f / MoveTime;
     }
 
     protected IEnumerator SmoothMovement (Vector3 end)
@@ -48,20 +51,30 @@ public abstract class MovingObject : MonoBehaviour
         //Vector2 start = transform.position;
         //Vector2 end = (start + new Vector2 (xDir, yDir));
 
-        //this.boxCollider.enabled = false;
+        if(boxCollider != null) this.boxCollider.enabled = false ;
 
-        hit = Physics2D.Linecast ((Vector2) transform.position, ((Vector2) transform.position + GetTmpVec2 (xDir, yDir)), this.blockingLayer);
+        hit = Physics2D.Linecast (
+            (Vector2) transform.position,
+            ((Vector2) transform.position + GetTmpVec2 (xDir, yDir)),
+            this.BlockingLayer);
         //斜めの壁抜け防止
         if (hit.transform == null && xDir != 0 && yDir != 0)
         {
-            hit = Physics2D.Linecast ((Vector2) transform.position, ((Vector2) transform.position + GetTmpVec2 (xDir, 0)), this.blockingLayer);
+            hit = Physics2D.Linecast (
+                (Vector2) transform.position,
+                ((Vector2) transform.position + GetTmpVec2 (xDir, 0)),
+                this.BlockingLayer);
+
             if (hit.transform == null)
             {
-                hit = Physics2D.Linecast ((Vector2) transform.position, ((Vector2) transform.position + GetTmpVec2 (0, yDir)), this.blockingLayer);
+                hit = Physics2D.Linecast (
+                    (Vector2) transform.position,
+                    ((Vector2) transform.position + GetTmpVec2 (0, yDir)),
+                    this.BlockingLayer);
             }
         }
 
-        //this.boxCollider.enabled = true;
+        if(boxCollider != null) this.boxCollider.enabled = true;
 
         if (hit.transform == null)
         {

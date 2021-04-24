@@ -29,14 +29,14 @@ public class PlayerPresenter : MonoBehaviour
                 Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow)
             ))
             .ThrottleFirst (System.TimeSpan.FromSeconds (0.2f)) // 実行間隔の指定
-            .Subscribe (_ =>
-                _playermodel.ChangeVec3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"))
-            );
+            .Subscribe (_ =>{
+                _playermodel.ChangeVec3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
+            });
 
-        // Vec3MoveValueRPの変更によってviewのMoveを呼び出すように登録する
+        // Vec3MoveValueRPの変更によって呼び出すように登録する
         _playermodel.Vec3PlayerPositionRP
             .Subscribe (
-                dvec3 => _playerview.Move (dvec3)
+                dvec3 =>_playerview.Move (dvec3)
             );
 
         // button onclick register
@@ -44,9 +44,10 @@ public class PlayerPresenter : MonoBehaviour
         {
             _moveBtn.button_OnClick ()
                 .Where (_ => !_playermodel.IsPlayerMovingRP.Value)
-                .Subscribe (_ =>
-                    _playermodel.ChangeVec3 (_moveBtn.vectorNum[0], _moveBtn.vectorNum[1])
-                );
+                .Subscribe (_ =>{
+                    _playerview.ChangeSprite(_moveBtn.CharaSprite);
+                    _playermodel.ChangeVec3 (_moveBtn.vectorNum[0], _moveBtn.vectorNum[1]);
+                });
         }
     }
 }

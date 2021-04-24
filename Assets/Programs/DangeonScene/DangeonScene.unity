@@ -178,6 +178,7 @@ MonoBehaviour:
   vectorNum:
   - -1
   - 0
+  CharaSprite: {fileID: 21300000, guid: 76812b75024024d27a3cc0c4de343d23, type: 3}
 --- !u!114 &95782019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,6 +316,7 @@ MonoBehaviour:
   vectorNum:
   - 0
   - 1
+  CharaSprite: {fileID: 21300000, guid: 4d1d75a9f6ba542f88e91d3cbbb8ebf3, type: 3}
 --- !u!114 &200862651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -674,6 +676,7 @@ MonoBehaviour:
   vectorNum:
   - 1
   - 0
+  CharaSprite: {fileID: 21300000, guid: c19dc23d29e8f41b5a7aa286823f1bb8, type: 3}
 --- !u!114 &745159040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -914,6 +917,7 @@ MonoBehaviour:
   vectorNum:
   - 0
   - -1
+  CharaSprite: {fileID: 21300000, guid: 8cb7e18bdca164a09a53b23b224f38ff, type: 3}
 --- !u!114 &1139139958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1010,7 +1014,7 @@ GameObject:
   - component: {fileID: 1786982117}
   - component: {fileID: 1786982120}
   - component: {fileID: 1786982119}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1025,7 +1029,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1786982114}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1112,10 +1116,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d917dc981dab04fb88139403cd560f9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockingLayer:
+  BlockingLayer:
     serializedVersion: 2
     m_Bits: 0
-  moveTime: 0.05
+  MoveTime: 0.05
 --- !u!61 &1786982119
 BoxCollider2D:
   m_ObjectHideFlags: 0

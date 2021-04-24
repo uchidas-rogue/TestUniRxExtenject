@@ -9,4 +9,9 @@ public class PlayerView : MovingObject
         //transform.position = vector3;
         base.AttemptMove ((int) vector3.x, (int) vector3.y);
     }
+
+    public  void ChangeSprite(Sprite sprite)
+    {
+        base.spriteRenderer.sprite = sprite;
+    }
 }
