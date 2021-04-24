@@ -6,7 +6,6 @@ using UnityEngine;
 public interface IPlayerModel
 {
     Vector3ReactiveProperty Vec3PlayerPositionRP { get; set; }
-    BoolReactiveProperty IsPlayerTurnRP { get; set; }
+    BoolReactiveProperty IsPlayerMovingRP { get; set; }
     void ChangeVec3 (float x, float y);
-    bool CheckKeyInput ();
 }

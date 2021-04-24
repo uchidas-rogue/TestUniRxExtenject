@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UniRx;
-using Zenject;
 using System.Threading;
+using UniRx;
+using UnityEngine;
+using Zenject;
 
 public class DangeonFieldPresenter : MonoBehaviour
 {
@@ -16,7 +16,6 @@ public class DangeonFieldPresenter : MonoBehaviour
     [SerializeField]
     public GameObject stairsTile;
 
-
     [SerializeField]
     public DangeonFieldVeiw _dangeonFieldView;
     private IDangeonFieldModel _dangeonFieldModel;
@@ -26,32 +25,33 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor(IDangeonFieldModel inject)
+    public void Constructor (IDangeonFieldModel inject)
     {
         _dangeonFieldModel = inject;
     }
 
-    void Awake()
+    void Awake ()
     {
-        _dangeonFieldModel.FloorNumRP.Subscribe(
-            num => {
+        _dangeonFieldModel.FloorNumRP.Subscribe (
+            num =>
+            {
                 //Debug.Log(num);
-                _dangeonFieldView.RemoveAllTiles();
-                _dangeonFieldModel.MakeField(FieldSize[0],FieldSize[1]);
-                SetField();
-                }
+                _dangeonFieldView.RemoveAllTiles ();
+                _dangeonFieldModel.MakeField (FieldSize[0], FieldSize[1]);
+                SetField ();
+            }
         );
 
         // Observable.Timer(System.TimeSpan.FromSeconds(5), System.TimeSpan.FromSeconds(4))
         //             .Subscribe(_=>_dangeonFieldModel.FloorNumRP.Value++);
-        
+
     }
 
-    public void SetField()
+    public void SetField ()
     {
-        for (int x = 0; x < _dangeonFieldModel.Field.GetLength(0); x++)
+        for (int x = 0; x < _dangeonFieldModel.Field.GetLength (0); x++)
         {
-            for (int y = 0; y < _dangeonFieldModel.Field.GetLength(1); y++)
+            for (int y = 0; y < _dangeonFieldModel.Field.GetLength (1); y++)
             {
                 switch (_dangeonFieldModel.Field[x, y, 0])
                 {

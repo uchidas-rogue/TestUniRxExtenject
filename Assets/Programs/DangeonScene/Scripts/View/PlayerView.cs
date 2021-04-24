@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerView : MovingObject
 {
-    public void Move(Vector3 vector3)
+    public void Move (Vector3 vector3)
     {
         //transform.position = vector3;
-        base.AttemptMove((int)vector3.x,(int)vector3.y);
+        base.AttemptMove ((int) vector3.x, (int) vector3.y);
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 public class DangeonFieldVeiw : MonoBehaviour
 {
@@ -14,15 +14,15 @@ public class DangeonFieldVeiw : MonoBehaviour
             Quaternion.identity,
             transform) as GameObject;
         // Change size 
-        instance.transform.localScale = new Vector3(1.04f,1.04f,0f);
+        instance.transform.localScale = new Vector3 (1.04f, 1.04f, 0f);
     }
 
-    public void RemoveAllTiles()
+    public void RemoveAllTiles ()
     {
         // Remove all child object 
         foreach (Transform item in transform)
         {
-            GameObject.Destroy(item.gameObject);
+            GameObject.Destroy (item.gameObject);
         }
     }
 }

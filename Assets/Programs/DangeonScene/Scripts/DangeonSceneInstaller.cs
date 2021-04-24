@@ -3,20 +3,20 @@ using Zenject;
 
 public class DangeonSceneInstaller : MonoInstaller
 {
-    public override void InstallBindings()
+    public override void InstallBindings ()
     {
         Container
-            .Bind<IDangeonFieldModel>()
-            .To<DangeonFieldModel>()
-            .FromNew()
-            .AsSingle()
-            .NonLazy();
+            .Bind<IDangeonFieldModel> ()
+            .To<DangeonFieldModel> ()
+            .FromNew ()
+            .AsSingle ()
+            .NonLazy ();
 
         Container
-            .Bind<IPlayerModel>()
-            .To<PlayerModel>()
-            .FromNew()
-            .AsSingle()
-            .NonLazy();
+            .Bind<IPlayerModel> ()
+            .To<PlayerModel> ()
+            .FromNew ()
+            .AsSingle ()
+            .NonLazy ();
     }
 }

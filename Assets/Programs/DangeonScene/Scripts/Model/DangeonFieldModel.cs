@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 using Zenject;
 
 public class DangeonFieldModel : IDangeonFieldModel
 {
     #region PublicParam
-    public IntReactiveProperty FloorNumRP{get;set;} = new IntReactiveProperty(0);
-    public int[, , ] Field{get;set;}
+    public IntReactiveProperty FloorNumRP { get; set; } = new IntReactiveProperty (0);
+    public int[, , ] Field { get; set; }
     #endregion PublicParam
 
     #region privateParam
@@ -119,7 +119,7 @@ public class DangeonFieldModel : IDangeonFieldModel
     private void CheckStairsSuggestPosition ()
     {
         CheckFloorPosition ();
-        StairsSuggestList.Clear();
+        StairsSuggestList.Clear ();
         foreach (var item in FloorPosList)
         {
             if ((Field[item[0] + 1, item[1], 0] + Field[item[0] - 1, item[1], 0] +

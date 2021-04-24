@@ -36,7 +36,7 @@ public abstract class MovingObject : MonoBehaviour
 
     private Vector2 GetTmpVec2 (int xDir, int yDir)
     {
-        tmpVec2.Set(xDir,yDir);
+        tmpVec2.Set (xDir, yDir);
         return tmpVec2;
     }
 
