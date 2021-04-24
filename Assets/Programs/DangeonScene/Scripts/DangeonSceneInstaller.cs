@@ -11,5 +11,12 @@ public class DangeonSceneInstaller : MonoInstaller
             .FromNew()
             .AsSingle()
             .NonLazy();
+
+        Container
+            .Bind<IPlayerModel>()
+            .To<PlayerModel>()
+            .FromNew()
+            .AsSingle()
+            .NonLazy();
     }
 }

@@ -35,16 +35,15 @@ public class DangeonFieldPresenter : MonoBehaviour
     {
         _dangeonFieldModel.FloorNumRP.Subscribe(
             num => {
-                Debug.Log(num);
+                //Debug.Log(num);
                 _dangeonFieldView.RemoveAllTiles();
                 _dangeonFieldModel.MakeField(FieldSize[0],FieldSize[1]);
                 SetField();
                 }
         );
 
-        Observable.Timer(System.TimeSpan.FromSeconds(5), System.TimeSpan.FromSeconds(4))
-                    .Subscribe(_=>_dangeonFieldModel.FloorNumRP.Value++)
-                    ;
+        // Observable.Timer(System.TimeSpan.FromSeconds(5), System.TimeSpan.FromSeconds(4))
+        //             .Subscribe(_=>_dangeonFieldModel.FloorNumRP.Value++);
         
     }
 
