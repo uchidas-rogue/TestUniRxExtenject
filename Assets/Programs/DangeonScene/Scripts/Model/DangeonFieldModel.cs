@@ -41,19 +41,19 @@ public class DangeonFieldModel : IDangeonFieldModel
     {
         return (CheckInside0Position (x, y + 2 * (int) Direction.up) ||
             CheckInside0Position (x, y + 2 * (int) Direction.down) ||
-            CheckInside0Position (x + (int) Direction.left, y) ||
-            CheckInside0Position (x + (int) Direction.right, y)
+            CheckInside0Position (x + 2 * (int) Direction.left / Mathf.Abs ((int) Direction.left), y) ||
+            CheckInside0Position (x + 2 * (int) Direction.right / Mathf.Abs ((int) Direction.right), y)
         );
     }
     private bool CheckCanDig (int x, int y, Direction direction)
     {
         if (direction == Direction.up || direction == Direction.down)
         {
-            return CheckInside0Position (x, y + 2 * (int) direction);
+            return CheckInside0Position (x, y + 2 * (int) direction / Mathf.Abs ((int) direction) );
         }
         else //(direction == Direction.left || direction == Direction.right)
         {
-            return CheckInside0Position (x + (int) direction, y);
+            return CheckInside0Position (x + 2 * (int) direction / Mathf.Abs ((int) direction) , y);
         }
     }
 
@@ -71,13 +71,13 @@ public class DangeonFieldModel : IDangeonFieldModel
             ) ||
             (CheckInside0Position (x, y - entryY) &&
                 CheckInside0Position (x, y - entryY + sizeY - 1) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) Direction.left / 2, y - entryY) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) Direction.left / 2, y - entryY + sizeY - 1)
+                CheckInside0Position (x + (sizeX - 1) * (int) Direction.left / Mathf.Abs ((int) Direction.left), y - entryY) &&
+                CheckInside0Position (x + (sizeX - 1) * (int) Direction.left / Mathf.Abs ((int) Direction.left), y - entryY + sizeY - 1)
             ) ||
             (CheckInside0Position (x, y - entryY) &&
                 CheckInside0Position (x, y - entryY + sizeY - 1) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) Direction.right / 2, y - entryY) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) Direction.right / 2, y - entryY + sizeY - 1)
+                CheckInside0Position (x + (sizeX - 1) * (int) Direction.right / Mathf.Abs ((int) Direction.right), y - entryY) &&
+                CheckInside0Position (x + (sizeX - 1) * (int) Direction.right / Mathf.Abs ((int) Direction.right), y - entryY + sizeY - 1)
             );
     }
 
@@ -95,8 +95,8 @@ public class DangeonFieldModel : IDangeonFieldModel
         {
             return (CheckInside0Position (x, y - entryY) &&
                 CheckInside0Position (x, y - entryY + sizeY - 1) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) direction / 2, y - entryY) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) direction / 2, y - entryY + sizeY - 1)
+                CheckInside0Position (x + (sizeX - 1) * (int) direction / Mathf.Abs ((int) direction), y - entryY) &&
+                CheckInside0Position (x + (sizeX - 1) * (int) direction / Mathf.Abs ((int) direction), y - entryY + sizeY - 1)
             );
         }
     }
@@ -223,7 +223,7 @@ public class DangeonFieldModel : IDangeonFieldModel
                 {
                     //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
                     //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
-                    Field[this.x + i * (int) direction / 2, this.y - roomEntryY + j, 0] = 2;
+                    Field[this.x + i * (int) direction / Mathf.Abs ((int) direction), this.y - roomEntryY + j, 0] = 2;
                 }
             }
             roomNumber++;
@@ -241,9 +241,9 @@ public class DangeonFieldModel : IDangeonFieldModel
         }
         if (direction == Direction.left || direction == Direction.right)
         {
-            this.x += (int) direction / 2;
+            this.x += (int) direction / Mathf.Abs ((int) direction);
             Field[this.x, this.y, 0] = 1;
-            this.x += (int) direction / 2;
+            this.x += (int) direction / Mathf.Abs ((int) direction);
             Field[this.x, this.y, 0] = 1;
         }
     }

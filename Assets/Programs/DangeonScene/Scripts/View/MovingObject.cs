@@ -7,40 +7,41 @@ using UnityEngine;
 /// </summary>
 public abstract class MovingObject : MonoBehaviour
 {
+    [SerializeField]
     public LayerMask BlockingLayer;
+    [SerializeField]
     public float MoveTime = 0.05f;
-
+    [SerializeField]
     private BoxCollider2D boxCollider;
+    [SerializeField]
     private Rigidbody2D rb2d;
+    [SerializeField]
     protected SpriteRenderer spriteRenderer;
-    private float inverseMoveTime;
+    [SerializeField]
+    protected Transform transformCash;
+
+
     private Vector2 tmpVec2 = new Vector2 (0, 0);
     private float sqrRemainingDistance = 0;
 
-    protected virtual void Start ()
-    {
-        this.rb2d = GetComponent<Rigidbody2D> ();
-        this.boxCollider = GetComponent<BoxCollider2D> ();
-        this.spriteRenderer = GetComponent<SpriteRenderer> ();
-        this.inverseMoveTime = 1f / MoveTime;
-    }
-
     protected IEnumerator SmoothMovement (Vector3 end)
     {
-        sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+        this.sqrRemainingDistance = (transformCash.position - end).sqrMagnitude;
 
-        while (float.Epsilon < sqrRemainingDistance)
+        while (float.Epsilon < this.sqrRemainingDistance)
         {
-            rb2d.MovePosition (Vector3.MoveTowards (rb2d.position, end, inverseMoveTime * Time.deltaTime));
-            sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+            this.rb2d.MovePosition (
+                Vector3.MoveTowards (this.rb2d.position, end, (1f / this.MoveTime) * Time.deltaTime)
+                );
+            this.sqrRemainingDistance = (transformCash.position - end).sqrMagnitude;
             yield return null;
         }
     }
 
     private Vector2 GetTmpVec2 (int xDir, int yDir)
     {
-        tmpVec2.Set (xDir, yDir);
-        return tmpVec2;
+        this.tmpVec2.Set (xDir, yDir);
+        return this.tmpVec2;
     }
 
     protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
@@ -51,34 +52,41 @@ public abstract class MovingObject : MonoBehaviour
         //Vector2 start = transform.position;
         //Vector2 end = (start + new Vector2 (xDir, yDir));
 
-        if(boxCollider != null) this.boxCollider.enabled = false ;
+        this.boxCollider.enabled = false ;
 
         hit = Physics2D.Linecast (
-            (Vector2) transform.position,
-            ((Vector2) transform.position + GetTmpVec2 (xDir, yDir)),
+            (Vector2) transformCash.position,
+            ((Vector2) transformCash.position + GetTmpVec2 (xDir, yDir)),
             this.BlockingLayer);
-        //斜めの壁抜け防止
+            
+        // 斜めの壁抜け防止
+        // 斜め方向の移動の場合
         if (hit.transform == null && xDir != 0 && yDir != 0)
         {
+            // check x dir
             hit = Physics2D.Linecast (
-                (Vector2) transform.position,
-                ((Vector2) transform.position + GetTmpVec2 (xDir, 0)),
+                (Vector2) transformCash.position,
+                ((Vector2) transformCash.position + GetTmpVec2 (xDir, 0)),
                 this.BlockingLayer);
 
+            // if xdir null
             if (hit.transform == null)
             {
+                // check y dir
                 hit = Physics2D.Linecast (
-                    (Vector2) transform.position,
-                    ((Vector2) transform.position + GetTmpVec2 (0, yDir)),
+                    (Vector2) transformCash.position,
+                    ((Vector2) transformCash.position + GetTmpVec2 (0, yDir)),
                     this.BlockingLayer);
             }
         }
 
-        if(boxCollider != null) this.boxCollider.enabled = true;
+        this.boxCollider.enabled = true;
 
         if (hit.transform == null)
         {
-            StartCoroutine (SmoothMovement ((Vector2) transform.position + GetTmpVec2 (xDir, yDir)));
+            StartCoroutine (
+                SmoothMovement ((Vector2) transformCash.position + GetTmpVec2 (xDir, yDir))
+                );
             return true;
         }
 
@@ -89,7 +97,7 @@ public abstract class MovingObject : MonoBehaviour
     {
         //MoveやOnCantMoveといった移動処理に関する一連の処理を呼び出す。
         //外部のクラスからこのオブジェクトを移動させるための入り口。
-        RaycastHit2D hit;
-        Move (xDir, yDir, out hit);
+        RaycastHit2D raycasthit2d;
+        Move (xDir, yDir, out raycasthit2d);
     }
 }

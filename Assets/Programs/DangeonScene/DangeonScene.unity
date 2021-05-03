@@ -175,10 +175,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 95782019}
-  vectorNum:
-  - -1
-  - 0
-  CharaSprite: {fileID: 21300000, guid: 76812b75024024d27a3cc0c4de343d23, type: 3}
+  vectorX: -1
+  vectorY: 0
 --- !u!114 &95782019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,10 +311,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 200862651}
-  vectorNum:
-  - 0
-  - 1
-  CharaSprite: {fileID: 21300000, guid: 4d1d75a9f6ba542f88e91d3cbbb8ebf3, type: 3}
+  vectorX: 0
+  vectorY: 1
 --- !u!114 &200862651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,7 +469,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &385204457
 GameObject:
@@ -523,7 +519,7 @@ MonoBehaviour:
   - {fileID: 8886057208171876704, guid: 5345980fce9a8465598cf792fbf4270b, type: 3}
   stairsTile: {fileID: 959749481097092139, guid: f3b6c29a90d6f447d871dae01f97e7ce, type: 3}
   _dangeonFieldView: {fileID: 385204458}
-  FieldSize: 0f0000000f000000
+  FieldSize: 0b0000000b000000
 --- !u!4 &385204460
 Transform:
   m_ObjectHideFlags: 0
@@ -536,7 +532,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &544937486
 GameObject:
@@ -614,11 +610,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 544937486}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1786982115}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &745159037
@@ -673,10 +669,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 745159040}
-  vectorNum:
-  - 1
-  - 0
-  CharaSprite: {fileID: 21300000, guid: c19dc23d29e8f41b5a7aa286823f1bb8, type: 3}
+  vectorX: 1
+  vectorY: 0
 --- !u!114 &745159040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -836,7 +830,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: 0
+  m_SortingLayerID: -505168283
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &1053679770
@@ -855,7 +849,7 @@ RectTransform:
   - {fileID: 200862649}
   - {fileID: 1139139956}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -914,10 +908,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1139139958}
-  vectorNum:
-  - 0
-  - -1
-  CharaSprite: {fileID: 21300000, guid: 8cb7e18bdca164a09a53b23b224f38ff, type: 3}
+  vectorX: 0
+  vectorY: -1
 --- !u!114 &1139139958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1031,9 +1023,10 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 544937489}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1786982116
 SpriteRenderer:
@@ -1118,8 +1111,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BlockingLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   MoveTime: 0.05
+  boxCollider: {fileID: 1786982119}
+  rb2d: {fileID: 1786982120}
+  spriteRenderer: {fileID: 1786982116}
+  transformCash: {fileID: 1786982115}
+  CharaSprite:
+  - {fileID: 21300000, guid: 4d1d75a9f6ba542f88e91d3cbbb8ebf3, type: 3}
+  - {fileID: 0}
+  - {fileID: 21300000, guid: c19dc23d29e8f41b5a7aa286823f1bb8, type: 3}
+  - {fileID: 0}
+  - {fileID: 21300000, guid: 8cb7e18bdca164a09a53b23b224f38ff, type: 3}
+  - {fileID: 0}
+  - {fileID: 21300000, guid: 76812b75024024d27a3cc0c4de343d23, type: 3}
+  - {fileID: 0}
 --- !u!61 &1786982119
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1231,5 +1237,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -9,10 +9,16 @@ public class MoveButtonView : MonoBehaviour
 {
     [SerializeField]
     public Button button;
+    /// <summary>
+    /// 移動方向を示す数値 水平方向
+    /// </summary>
     [SerializeField]
-    public float[] vectorNum;
+    public float vectorX;
+    /// <summary>
+    /// 移動方向を示す数値 垂直方向
+    /// </summary>
     [SerializeField]
-    public Sprite CharaSprite;
+    public float vectorY;
 
     public IObservable<Unit> button_OnClick () => button.onClick.AsObservable ();
 }
