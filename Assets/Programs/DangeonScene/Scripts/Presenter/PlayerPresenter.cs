@@ -29,7 +29,7 @@ public class PlayerPresenter : MonoBehaviour
                 Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) ||
                 Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow)
             ))
-            .ThrottleFirst (System.TimeSpan.FromSeconds (0.2f)) // 実行間隔の指定
+            .ThrottleFirst (System.TimeSpan.FromSeconds (0.3f)) // 実行間隔の指定
             .Subscribe (_ =>
             {
                 _playermodel.ChangeVec3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));

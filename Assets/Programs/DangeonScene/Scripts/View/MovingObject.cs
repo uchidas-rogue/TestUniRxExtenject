@@ -16,11 +16,9 @@ public abstract class MovingObject : MonoBehaviour
     [SerializeField]
     private Rigidbody2D rb2d;
     [SerializeField]
-    protected SpriteRenderer spriteRenderer;
-    [SerializeField]
     protected Transform transformCash;
-
-
+    [SerializeField]
+    public Sprite[] CharaSprite;
     private Vector2 tmpVec2 = new Vector2 (0, 0);
     private float sqrRemainingDistance = 0;
 
@@ -32,7 +30,7 @@ public abstract class MovingObject : MonoBehaviour
         {
             this.rb2d.MovePosition (
                 Vector3.MoveTowards (this.rb2d.position, end, (1f / this.MoveTime) * Time.deltaTime)
-                );
+            );
             this.sqrRemainingDistance = (transformCash.position - end).sqrMagnitude;
             yield return null;
         }
@@ -52,13 +50,13 @@ public abstract class MovingObject : MonoBehaviour
         //Vector2 start = transform.position;
         //Vector2 end = (start + new Vector2 (xDir, yDir));
 
-        this.boxCollider.enabled = false ;
+        this.boxCollider.enabled = false;
 
         hit = Physics2D.Linecast (
             (Vector2) transformCash.position,
             ((Vector2) transformCash.position + GetTmpVec2 (xDir, yDir)),
             this.BlockingLayer);
-            
+
         // 斜めの壁抜け防止
         // 斜め方向の移動の場合
         if (hit.transform == null && xDir != 0 && yDir != 0)
@@ -86,7 +84,7 @@ public abstract class MovingObject : MonoBehaviour
         {
             StartCoroutine (
                 SmoothMovement ((Vector2) transformCash.position + GetTmpVec2 (xDir, yDir))
-                );
+            );
             return true;
         }
 
@@ -100,4 +98,26 @@ public abstract class MovingObject : MonoBehaviour
         RaycastHit2D raycasthit2d;
         Move (xDir, yDir, out raycasthit2d);
     }
+
+    #region spritechange
+
+    [SerializeField]
+    protected SpriteRenderer spriteRenderer;
+    public void ChangeSprite (Direction dir)
+    {
+        // none なら何もしない
+        if (dir == Direction.none) { return; }
+        if ((int) dir > 0)
+        {
+            spriteRenderer.sprite = CharaSprite[(int) dir - 1];
+        }
+        else
+        {
+            spriteRenderer.sprite = CharaSprite[Mathf.Abs ((int) dir) + 3];
+        }
+
+    }
+
+    #endregion
+
 }
