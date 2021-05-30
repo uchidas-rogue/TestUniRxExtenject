@@ -11,6 +11,8 @@ public class DangeonFieldPresenter : MonoBehaviour
     public DangeonFieldVeiw _dangeonFieldView;
     private IDangeonFieldModel _dangeonFieldModel;
 
+    private IPlayerModel _playermodel;
+
     [SerializeField]
     public int FieldWidth;
      [SerializeField]
@@ -18,9 +20,10 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IDangeonFieldModel injectdfm)
+    public void Constructor (IDangeonFieldModel injectdfm,IPlayerModel injectpm)
     {
         _dangeonFieldModel = injectdfm;
+        _playermodel = injectpm;
     }
 
     void Awake ()

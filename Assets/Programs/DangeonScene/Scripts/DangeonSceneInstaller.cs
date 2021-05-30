@@ -18,5 +18,12 @@ public class DangeonSceneInstaller : MonoInstaller
             .FromNew ()
             .AsSingle ()
             .NonLazy ();
+
+        Container
+            .Bind<IMiniMapModel>()
+            .To<MiniMapModel>()
+            .FromNew()
+            .AsSingle()
+            .NonLazy();
     }
 }

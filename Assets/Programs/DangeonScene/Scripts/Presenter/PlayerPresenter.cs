@@ -28,7 +28,7 @@ public class PlayerPresenter : MonoBehaviour
         // button onclick register
         foreach (var _moveBtn in _moveButtonView)
         {
-            _moveBtn.button_OnClick ()
+            _moveBtn.movebutton_OnClick ()
                 .Where (_ => !_playermodel.IsPlayerMovingRP.Value)
                 .Subscribe (_ =>
                 {
@@ -49,7 +49,6 @@ public class PlayerPresenter : MonoBehaviour
 
         // playerの位置が変わった時の処理
         _playermodel.PlayerPositionVec3RP.Subscribe (Pos => Debug.Log (Pos.x + "," + Pos.y));
-
 
         // unirxでのupdateみたいなやつ => everyupdate
         // keyboard up down left right 監視する
