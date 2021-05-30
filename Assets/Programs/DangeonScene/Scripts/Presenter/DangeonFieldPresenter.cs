@@ -21,7 +21,9 @@ public class DangeonFieldPresenter : MonoBehaviour
     private IDangeonFieldModel _dangeonFieldModel;
 
     [SerializeField]
-    public int[] FieldSize;
+    public int FieldWidth;
+     [SerializeField]
+    public int FieldHeith;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
@@ -38,7 +40,7 @@ public class DangeonFieldPresenter : MonoBehaviour
                 Debug.Log ("floornum:" + num);
                 SetFieldSize(num);
                 _dangeonFieldView.RemoveAllTiles ();
-                _dangeonFieldModel.MakeField (FieldSize[0], FieldSize[1]);
+                _dangeonFieldModel.MakeField (FieldWidth, FieldHeith);
                 SetField ();
             }
         );
@@ -54,15 +56,15 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     public void SetFieldSize (int floornum)
     {
-        FieldSize[0] += floornum;
-        FieldSize[1] += floornum;
+        FieldWidth += floornum;
+        FieldHeith += floornum;
 
         // NG size under 7
-        FieldSize[0] = FieldSize[0] < 11 ? 11 : FieldSize[0];
-        FieldSize[1] = FieldSize[1] < 11 ? 11 : FieldSize[1];
+        FieldWidth = FieldWidth < 11 ? 11 : FieldWidth;
+        FieldHeith = FieldHeith < 11 ? 11 : FieldHeith;
         // NG even number
-        FieldSize[0] = FieldSize[0] % 2 == 0 ? FieldSize[0] + 1 : FieldSize[0];
-        FieldSize[1] = FieldSize[1] % 2 == 0 ? FieldSize[1] + 1 : FieldSize[1];
+        FieldWidth = FieldWidth % 2 == 0 ? FieldWidth + 1 : FieldWidth;
+        FieldHeith = FieldHeith % 2 == 0 ? FieldHeith + 1 : FieldHeith;
     }
 
     public void SetField ()
