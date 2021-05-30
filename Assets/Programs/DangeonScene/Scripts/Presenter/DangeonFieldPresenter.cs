@@ -37,13 +37,24 @@ public class DangeonFieldPresenter : MonoBehaviour
             {
                 //Debug.Log(num);
                 _dangeonFieldView.RemoveAllTiles ();
+                // NG size under 7
+                FieldSize[0] = FieldSize[0] < 11 ? 11 : FieldSize[0];
+                FieldSize[1] = FieldSize[1] < 11 ? 11 : FieldSize[1];
+                // NG even number
+                FieldSize[0] = FieldSize[0] % 2 == 0 ? FieldSize[0] + 1 : FieldSize[0];
+                FieldSize[1] = FieldSize[1] % 2 == 0 ? FieldSize[1] + 1 : FieldSize[1];
+
                 _dangeonFieldModel.MakeField (FieldSize[0], FieldSize[1]);
                 SetField ();
             }
         );
 
-        // Observable.Timer(System.TimeSpan.FromSeconds(5), System.TimeSpan.FromSeconds(4))
-        //             .Subscribe(_=>_dangeonFieldModel.FloorNumRP.Value++);
+        Observable.Timer (System.TimeSpan.FromSeconds (2), System.TimeSpan.FromSeconds (4))
+            .Subscribe (_ =>
+            {
+                Debug.Log (_dangeonFieldModel.FloorNumRP.Value);
+                _dangeonFieldModel.FloorNumRP.Value++;
+            });
 
     }
 
