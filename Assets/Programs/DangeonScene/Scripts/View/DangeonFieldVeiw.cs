@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class DangeonFieldVeiw : MonoBehaviour
 {
+    //floor prefab 
+    [SerializeField]
+    public GameObject[] floorTiles;
+    //wall prefab
+    [SerializeField]
+    public GameObject[] wallTiles;
+    [SerializeField]
+    public GameObject stairsTile;
     public void SetTile (GameObject tile, int x, int y)
     {
         // Clone the Tiles

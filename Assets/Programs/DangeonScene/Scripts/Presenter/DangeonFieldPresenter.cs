@@ -7,15 +7,6 @@ using Zenject;
 
 public class DangeonFieldPresenter : MonoBehaviour
 {
-    //floor prefab 
-    [SerializeField]
-    public GameObject[] floorTiles;
-    //wall prefab
-    [SerializeField]
-    public GameObject[] wallTiles;
-    [SerializeField]
-    public GameObject stairsTile;
-
     [SerializeField]
     public DangeonFieldVeiw _dangeonFieldView;
     private IDangeonFieldModel _dangeonFieldModel;
@@ -76,16 +67,16 @@ public class DangeonFieldPresenter : MonoBehaviour
                 switch (_dangeonFieldModel.Field[x, y, 0])
                 {
                     case 0:
-                        _dangeonFieldView.SetTile (wallTiles[(int) Wall.wallreaf], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.wallTiles[(int) Wall.wallreaf], x, y);
                         break;
                     case 1:
-                        _dangeonFieldView.SetTile (floorTiles[(int) Floor.rocktile], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.floorTiles[(int) Floor.rocktile], x, y);
                         break;
                     case 2:
-                        _dangeonFieldView.SetTile (floorTiles[(int) Floor.rocktile], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.floorTiles[(int) Floor.rocktile], x, y);
                         break;
                     case 3:
-                        _dangeonFieldView.SetTile (stairsTile, x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.stairsTile, x, y);
                         break;
                     default:
                         break;

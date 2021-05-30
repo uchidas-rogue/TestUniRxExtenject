@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 public class PlayerPresenter : MonoBehaviour
