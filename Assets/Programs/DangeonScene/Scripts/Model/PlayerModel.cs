@@ -5,16 +5,17 @@ using UnityEngine;
 
 public class PlayerModel : IPlayerModel
 {
-    public Vector3ReactiveProperty Vec3PlayerPositionRP { get; set; } = new Vector3ReactiveProperty ();
+    public Vector3ReactiveProperty PlayerInputVec3RP { get; set; } = new Vector3ReactiveProperty ();
     public BoolReactiveProperty IsPlayerMovingRP { get; set; } = new BoolReactiveProperty (false);
     public ReactiveProperty<Direction> DirectionPlayerRP { get; set; } = new ReactiveProperty<Direction> (Direction.none);
+    public Vector3ReactiveProperty PlayerPositionVec3RP { get; set; } = new Vector3ReactiveProperty ();
 
     private Vector3 vector3 = new Vector3 (0f, 0f, 0f);
 
     public void ChangeVec3 (float x, float y)
     {
         IsPlayerMovingRP.Value = true;
-        InitPosition ();
+        InitInputVec ();
 
         if (x != 0) x = x > 0f ? 1f : -1f;
         if (y != 0) y = y > 0f ? 1f : -1f;
@@ -22,15 +23,15 @@ public class PlayerModel : IPlayerModel
         DirectionPlayerRP.Value = CheckDirection (x, y);
 
         vector3.Set (x, y, 0f);
-        Vec3PlayerPositionRP.Value = vector3;
+        PlayerInputVec3RP.Value = vector3;
 
         IsPlayerMovingRP.Value = false;
     }
 
-    public void InitPosition ()
+    public void InitInputVec ()
     {
         vector3.Set (0f, 0f, 0f);
-        Vec3PlayerPositionRP.Value = vector3;
+        PlayerInputVec3RP.Value = vector3;
     }
 
     public Direction CheckDirection (float x, float y)

@@ -14,7 +14,7 @@ public class DangeonFieldVeiw : MonoBehaviour
             Quaternion.identity,
             transform) as GameObject;
         // Change size 
-        instance.transform.localScale = new Vector3 (1.04f, 1.04f, 0f);
+        instance.transform.localScale = new Vector3 (1.05f, 1.05f, 0f);
     }
 
     public void RemoveAllTiles ()

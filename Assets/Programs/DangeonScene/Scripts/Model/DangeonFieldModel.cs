@@ -7,7 +7,7 @@ using Zenject;
 public class DangeonFieldModel : IDangeonFieldModel
 {
     #region PublicParam
-    public IntReactiveProperty FloorNumRP { get; set; } = new IntReactiveProperty (0);
+    public IntReactiveProperty FloorNumRP { get; set; } = new IntReactiveProperty (1);
     public int[, , ] Field { get; set; }
     #endregion PublicParam
 
@@ -32,7 +32,7 @@ public class DangeonFieldModel : IDangeonFieldModel
     private bool CheckInside0Position (int x, int y)
     {
         return (x > -1 && x < this.width) &&
-            (y > -1 && y < this.width) &&
+            (y > -1 && y < this.height) &&
             (this.Field[x, y, 0] == 0);
     }
 
@@ -49,11 +49,11 @@ public class DangeonFieldModel : IDangeonFieldModel
     {
         if (direction == Direction.up || direction == Direction.down)
         {
-            return CheckInside0Position (x, y + 2 * (int) direction / Mathf.Abs ((int) direction) );
+            return CheckInside0Position (x, y + 2 * (int) direction / Mathf.Abs ((int) direction));
         }
         else //(direction == Direction.left || direction == Direction.right)
         {
-            return CheckInside0Position (x + 2 * (int) direction / Mathf.Abs ((int) direction) , y);
+            return CheckInside0Position (x + 2 * (int) direction / Mathf.Abs ((int) direction), y);
         }
     }
 
@@ -168,8 +168,11 @@ public class DangeonFieldModel : IDangeonFieldModel
     {
         CheckFloorPosition ();
         int randomListNum = Random.Range (0, FloorPosList.Count);
-        this.x = FloorPosList[randomListNum][0];
-        this.y = FloorPosList[randomListNum][1];
+        if (FloorPosList.Count != 0)
+        {
+            this.x = FloorPosList[randomListNum][0];
+            this.y = FloorPosList[randomListNum][1];
+        }
     }
 
     private void ChangeroomSize ()
@@ -251,8 +254,11 @@ public class DangeonFieldModel : IDangeonFieldModel
     private void MakeStairs ()
     {
         CheckStairsSuggestPosition ();
-        int randomListNum = Random.Range (0, StairsSuggestList.Count);
-        Field[StairsSuggestList[randomListNum][0], StairsSuggestList[randomListNum][1], 0] = 3;
+        if (StairsSuggestList.Count != 0)
+        {
+            int randomListNum = Random.Range (0, StairsSuggestList.Count);
+            Field[StairsSuggestList[randomListNum][0], StairsSuggestList[randomListNum][1], 0] = 3;
+        }
     }
     #endregion Method
 

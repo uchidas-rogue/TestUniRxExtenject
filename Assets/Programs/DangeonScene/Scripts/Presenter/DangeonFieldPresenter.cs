@@ -25,9 +25,9 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IDangeonFieldModel inject)
+    public void Constructor (IDangeonFieldModel injectdfm)
     {
-        _dangeonFieldModel = inject;
+        _dangeonFieldModel = injectdfm;
     }
 
     void Awake ()
@@ -35,27 +35,34 @@ public class DangeonFieldPresenter : MonoBehaviour
         _dangeonFieldModel.FloorNumRP.Subscribe (
             num =>
             {
-                //Debug.Log(num);
+                Debug.Log ("floornum:" + num);
+                SetFieldSize(num);
                 _dangeonFieldView.RemoveAllTiles ();
-                // NG size under 7
-                FieldSize[0] = FieldSize[0] < 11 ? 11 : FieldSize[0];
-                FieldSize[1] = FieldSize[1] < 11 ? 11 : FieldSize[1];
-                // NG even number
-                FieldSize[0] = FieldSize[0] % 2 == 0 ? FieldSize[0] + 1 : FieldSize[0];
-                FieldSize[1] = FieldSize[1] % 2 == 0 ? FieldSize[1] + 1 : FieldSize[1];
-
                 _dangeonFieldModel.MakeField (FieldSize[0], FieldSize[1]);
                 SetField ();
             }
         );
 
-        Observable.Timer (System.TimeSpan.FromSeconds (2), System.TimeSpan.FromSeconds (4))
-            .Subscribe (_ =>
-            {
-                Debug.Log (_dangeonFieldModel.FloorNumRP.Value);
-                _dangeonFieldModel.FloorNumRP.Value++;
-            });
+        // Observable.Timer (System.TimeSpan.FromSeconds (2), System.TimeSpan.FromSeconds (4))
+        //     .Subscribe (_ =>
+        //     {
+        //         Debug.Log (_dangeonFieldModel.FloorNumRP.Value);
+        //         _dangeonFieldModel.FloorNumRP.Value++;
+        //     });
 
+    }
+
+    public void SetFieldSize (int floornum)
+    {
+        FieldSize[0] += floornum;
+        FieldSize[1] += floornum;
+
+        // NG size under 7
+        FieldSize[0] = FieldSize[0] < 11 ? 11 : FieldSize[0];
+        FieldSize[1] = FieldSize[1] < 11 ? 11 : FieldSize[1];
+        // NG even number
+        FieldSize[0] = FieldSize[0] % 2 == 0 ? FieldSize[0] + 1 : FieldSize[0];
+        FieldSize[1] = FieldSize[1] % 2 == 0 ? FieldSize[1] + 1 : FieldSize[1];
     }
 
     public void SetField ()
