@@ -57,21 +57,20 @@ public class MiniMapPresenter : MonoBehaviour
 
     public void CheckFloor (int x, int y)
     {
-        if (_dangeonfieldmodel.Field[x, y, 1] == 0 && _dangeonfieldmodel.Field[x, y, 0] == 2)
-        {
+        if (_dangeonfieldmodel.Field[x, y, 1] == 0)
+        {// チェックしてないタイルなら
             _dangeonfieldmodel.Field[x, y, 1] = 1;
-            TurnToWalked (x, y);
-        }
-        else
-        {
-            _dangeonfieldmodel.Field[x, y, 1] = 1;
+            if(_dangeonfieldmodel.Field[x, y, 0] == 2)
+            {// まだフロア内なら
+                TurnToWalked (x, y);
+            }
         }
     }
 
     public void TurnToWalked (int x, int y)
     {
         if (_dangeonfieldmodel.Field[x, y, 0] == 2)
-        {
+        {// フロア内なら周り全て見に行く
             CheckFloor (x - 1, y - 1);
             CheckFloor (x - 1, y);
             CheckFloor (x - 1, y + 1);
@@ -82,7 +81,7 @@ public class MiniMapPresenter : MonoBehaviour
             CheckFloor (x + 1, y + 1);
         }
         else
-        {
+        {// フロア外なら問答無用で周り全てチェック済にする
             _dangeonfieldmodel.Field[x - 1, y - 1, 1] = 1;
             _dangeonfieldmodel.Field[x - 1, y, 1] = 1;
             _dangeonfieldmodel.Field[x - 1, y + 1, 1] = 1;
@@ -93,7 +92,6 @@ public class MiniMapPresenter : MonoBehaviour
             _dangeonfieldmodel.Field[x + 1, y + 1, 1] = 1;
         }
     }
-
     public string MakeMiniMapString (int playerposx, int playerposy)
     {
         mapStringBuilder.Clear ();
