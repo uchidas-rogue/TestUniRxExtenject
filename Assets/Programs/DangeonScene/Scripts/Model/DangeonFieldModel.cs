@@ -8,6 +8,7 @@ public class DangeonFieldModel : IDangeonFieldModel
 {
     #region PublicParam
     public IntReactiveProperty FloorNumRP { get; set; } = new IntReactiveProperty (1);
+    public BoolReactiveProperty IsFieldSetting { get; set; } = new BoolReactiveProperty (false);
     public int[, , ] Field { get; set; }
     #endregion PublicParam
 
@@ -15,8 +16,8 @@ public class DangeonFieldModel : IDangeonFieldModel
     private int width;
     private int height;
     private Direction direction = Direction.right;
-    private int x = 1;
-    private int y = 1;
+    private int x;
+    private int y;
     private int roomWidth;
     private int roomHeiht;
     private int roomEntryX;
@@ -49,11 +50,11 @@ public class DangeonFieldModel : IDangeonFieldModel
     {
         if (direction == Direction.up || direction == Direction.down)
         {
-            return CheckInside0Position (x, y + 2 * (int) direction / Mathf.Abs ((int) direction));
+            return CheckInside0Position (x, y + 2 * ((int) direction / Mathf.Abs ((int) direction)));
         }
         else //(direction == Direction.left || direction == Direction.right)
         {
-            return CheckInside0Position (x + 2 * (int) direction / Mathf.Abs ((int) direction), y);
+            return CheckInside0Position (x + 2 * ((int) direction / Mathf.Abs ((int) direction)), y);
         }
     }
 
@@ -95,8 +96,8 @@ public class DangeonFieldModel : IDangeonFieldModel
         {
             return (CheckInside0Position (x, y - entryY) &&
                 CheckInside0Position (x, y - entryY + sizeY - 1) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) direction / Mathf.Abs ((int) direction), y - entryY) &&
-                CheckInside0Position (x + (sizeX - 1) * (int) direction / Mathf.Abs ((int) direction), y - entryY + sizeY - 1)
+                CheckInside0Position (x + (sizeX - 1) * ((int) direction / Mathf.Abs ((int) direction)), y - entryY) &&
+                CheckInside0Position (x + (sizeX - 1) * ((int) direction / Mathf.Abs ((int) direction)), y - entryY + sizeY - 1)
             );
         }
     }
@@ -218,7 +219,7 @@ public class DangeonFieldModel : IDangeonFieldModel
             }
             roomNumber++;
         }
-        if (direction == Direction.left || direction == Direction.right)
+        else //if (direction == Direction.left || direction == Direction.right)
         {
             for (int i = 0; i < roomWidth; i++)
             {
@@ -226,7 +227,7 @@ public class DangeonFieldModel : IDangeonFieldModel
                 {
                     //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
                     //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
-                    Field[this.x + i * (int) direction / Mathf.Abs ((int) direction), this.y - roomEntryY + j, 0] = 2;
+                    Field[this.x + i * ((int) direction / Mathf.Abs ((int) direction)), this.y - roomEntryY + j, 0] = 2;
                 }
             }
             roomNumber++;
@@ -242,11 +243,11 @@ public class DangeonFieldModel : IDangeonFieldModel
             this.y += (int) direction;
             Field[this.x, this.y, 0] = 1;
         }
-        if (direction == Direction.left || direction == Direction.right)
+        else // if (direction == Direction.left || direction == Direction.right)
         {
-            this.x += (int) direction / Mathf.Abs ((int) direction);
+            this.x += ((int) direction / Mathf.Abs ((int) direction));
             Field[this.x, this.y, 0] = 1;
-            this.x += (int) direction / Mathf.Abs ((int) direction);
+            this.x += ((int) direction / Mathf.Abs ((int) direction));
             Field[this.x, this.y, 0] = 1;
         }
     }
@@ -262,13 +263,14 @@ public class DangeonFieldModel : IDangeonFieldModel
     }
     #endregion Method
 
-    public void MakeField (int width, int height)
+    public void MakeField (int width, int height, int level)
     {
+        x = 49;
+        y = 49;
         this.width = width;
         this.height = height;
         Field = new int[width, height, 2];
 
-        ChangeroomSize ();
         if (CheckCanMakeRoom (x, y, roomWidth, roomHeiht, roomEntryX, roomEntryY))
         {
             while (!CheckCanMakeRoom (x, y, roomWidth, roomHeiht, roomEntryX, roomEntryY, direction))
@@ -280,18 +282,14 @@ public class DangeonFieldModel : IDangeonFieldModel
 
         int cnt = 0;
 
-        while (cnt < 500)
+        while (cnt < (x + y) * level)
         {
             ChangeDir ();
             ChangeroomSize ();
             ChangeroomEntry ();
 
-            if (CheckCanMakeRoom (x, y, roomWidth, roomHeiht, roomEntryX, roomEntryY))
+            if (CheckCanMakeRoom (x, y, roomWidth, roomHeiht, roomEntryX, roomEntryY, direction))
             {
-                while (!CheckCanMakeRoom (x, y, roomWidth, roomHeiht, roomEntryX, roomEntryY, direction))
-                {
-                    ChangeDir ();
-                }
                 MakeRoom ();
             }
             else if (CheckCanDig (x, y, direction))

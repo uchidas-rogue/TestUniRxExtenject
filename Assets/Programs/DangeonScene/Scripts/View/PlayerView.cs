@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlayerView : MovingObject
 {
 
-    private Vector3 InitPosVec3 = new Vector3 (1f, 1f, 0);
+    private Vector3 InitPosVec3 = new Vector3 (49f, 49f, 0);
     public void Move (Vector3 vector3)
     {
         base.AttemptMove ((int) vector3.x, (int) vector3.y);

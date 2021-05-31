@@ -22,7 +22,7 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     [SerializeField]
     public DangeonFieldVeiw _dangeonFieldView;
-    
+
     [SerializeField]
     public int FieldWidth;
     [SerializeField]
@@ -33,31 +33,29 @@ public class DangeonFieldPresenter : MonoBehaviour
         _dangeonFieldModel.FloorNumRP.Subscribe (
             num =>
             {
+                _dangeonFieldModel.IsFieldSetting.Value = true;
                 Debug.Log ("floornum:" + num);
-                SetFieldSize (num);
+                SetFieldSize ();
                 _dangeonFieldView.RemoveAllTiles ();
-                _dangeonFieldModel.MakeField (FieldWidth, FieldHeith);
+                _dangeonFieldModel.MakeField (FieldWidth, FieldHeith, num);
                 SetField ();
+                _dangeonFieldModel.IsFieldSetting.Value = false;
             }
         );
 
         // Observable.Timer (System.TimeSpan.FromSeconds (2), System.TimeSpan.FromSeconds (4))
         //     .Subscribe (_ =>
         //     {
-        //         Debug.Log (_dangeonFieldModel.FloorNumRP.Value);
         //         _dangeonFieldModel.FloorNumRP.Value++;
         //     });
 
     }
 
-    public void SetFieldSize (int floornum)
+    public void SetFieldSize ()
     {
-        FieldWidth += floornum;
-        FieldHeith += floornum;
-
         // NG size under 7
-        FieldWidth = FieldWidth < 11 ? 11 : FieldWidth;
-        FieldHeith = FieldHeith < 11 ? 11 : FieldHeith;
+        FieldWidth = FieldWidth < 101 ? 101 : FieldWidth;
+        FieldHeith = FieldHeith < 101 ? 101 : FieldHeith;
         // NG even number
         FieldWidth = FieldWidth % 2 == 0 ? FieldWidth + 1 : FieldWidth;
         FieldHeith = FieldHeith % 2 == 0 ? FieldHeith + 1 : FieldHeith;

@@ -5,8 +5,9 @@ using UnityEngine;
 
 public interface IDangeonFieldModel
 {
-    public IntReactiveProperty FloorNumRP { get; set; }
-    public int[, , ] Field { get; set; }
+    IntReactiveProperty FloorNumRP { get; set; }
+    BoolReactiveProperty IsFieldSetting { get; set; }
+    int[, , ] Field { get; set; }
 
-    public void MakeField (int width, int height);
+    void MakeField (int width, int height, int level);
 }

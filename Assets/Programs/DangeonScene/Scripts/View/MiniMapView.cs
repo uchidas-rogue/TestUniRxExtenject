@@ -25,7 +25,7 @@ public class MiniMapView : MonoBehaviour
         minimapRect.localPosition = mappos;
         minimapRect.sizeDelta = mapsize;
         maptextGUI.fontSize = fontSize;
-        maptextGUI.alignment = TextAlignmentOptions.TopLeft;
+        maptextGUI.alignment = TextAlignmentOptions.MidlineJustified;
         maptextGUI.lineSpacing = -66.5f;
         maptextGUI.characterSpacing = -11.6f;
     }

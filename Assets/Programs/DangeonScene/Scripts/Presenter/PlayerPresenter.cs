@@ -8,15 +8,15 @@ using Zenject;
 public class PlayerPresenter : MonoBehaviour
 {
     #region injection
-    IPlayerModel _playermodel;
-    IDangeonFieldModel _dangeonfieldmodel;
+    IPlayerModel _playerModel;
+    IDangeonFieldModel _dangeonFieldModel;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
     public void Constructor (IPlayerModel injectpm, IDangeonFieldModel injectdfm)
     {
-        _playermodel = injectpm;
-        _dangeonfieldmodel = injectdfm;
+        _playerModel = injectpm;
+        _dangeonFieldModel = injectdfm;
     }
     #endregion
 
@@ -31,38 +31,48 @@ public class PlayerPresenter : MonoBehaviour
         foreach (var _moveBtn in _moveButtonView)
         {
             _moveBtn.movebutton_OnClick ()
-                .Where (_ => !_playermodel.IsPlayerMovingRP.Value)
+                .Where (_ => !_playerModel.IsPlayerMovingRP.Value && !_dangeonFieldModel.IsFieldSetting.Value)
+                .ThrottleFirst (System.TimeSpan.FromSeconds (0.3f)) // 実行間隔の指定
                 .Subscribe (_ =>
                 {
-                    _playermodel.ChangeVec3 (_moveBtn.vectorX, _moveBtn.vectorY);
+                    _playerModel.ChangeVec3 (_moveBtn.vectorX, _moveBtn.vectorY);
                 });
         }
 
         // PlayerInputVec3RPの変更によって呼び出すように登録する
-        _playermodel.PlayerInputVec3RP
+        _playerModel.PlayerInputVec3RP
             .Subscribe (
                 dvec3 => _playerview.Move (dvec3)
             );
         // 移動時のキャラ絵の変更
-        _playermodel.DirectionPlayerRP
+        _playerModel.DirectionPlayerRP
             .Subscribe (
                 dir => _playerview.ChangeSprite (dir)
             );
 
         // playerの位置が変わった時の処理
-        _playermodel.PlayerPositionVec3RP.Subscribe (Pos => Debug.Log (Pos.x + "," + Pos.y));
+        //_playermodel.PlayerPositionVec3RP.Subscribe (Pos => Debug.Log (Pos.x + "," + Pos.y));
+
+        // フロア変わったら初期位置に移動
+        _dangeonFieldModel.FloorNumRP
+            .Subscribe (_ =>
+            {
+                _playerview.InitPosition ();
+                _playerModel.InitInputVec ();
+            });
 
         // unirxでのupdateみたいなやつ => everyupdate
         // keyboard up down left right 監視する
         _playerview.UpdateAsObservable ()
-            .Where (_ => !_playermodel.IsPlayerMovingRP.Value && (
-                Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) ||
-                Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow)
-            ))
+            .Where (_ => !_playerModel.IsPlayerMovingRP.Value && !_dangeonFieldModel.IsFieldSetting.Value &&
+                (
+                    Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) ||
+                    Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow)
+                ))
             .ThrottleFirst (System.TimeSpan.FromSeconds (0.3f)) // 実行間隔の指定
             .Subscribe (_ =>
             {
-                _playermodel.ChangeVec3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
+                _playerModel.ChangeVec3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
             });
 
         // player postion get
@@ -72,7 +82,7 @@ public class PlayerPresenter : MonoBehaviour
                 _ =>
                 {
                     tmpvec3.Set (Mathf.Ceil (_playerview.transform.position.x), Mathf.Ceil (_playerview.transform.position.y), 0);
-                    _playermodel.PlayerPositionVec3RP.Value = tmpvec3;
+                    _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
                 });
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
@@ -82,11 +92,7 @@ public class PlayerPresenter : MonoBehaviour
             .Subscribe (_ =>
             {
                 // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
-                _playermodel.IsPlayerMovingRP.Value = true;
-                _playermodel.InitInputVec ();
-                _playerview.InitPosition ();
-                _dangeonfieldmodel.FloorNumRP.Value++;
-                _playermodel.IsPlayerMovingRP.Value = false;
+                _dangeonFieldModel.FloorNumRP.Value++;
             });
     }
 }
