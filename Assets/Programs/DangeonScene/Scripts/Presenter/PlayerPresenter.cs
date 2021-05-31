@@ -7,11 +7,7 @@ using Zenject;
 
 public class PlayerPresenter : MonoBehaviour
 {
-    [SerializeField]
-    PlayerView _playerview;
-    [SerializeField]
-    MoveButtonView[] _moveButtonView;
-
+    #region injection
     IPlayerModel _playermodel;
     IDangeonFieldModel _dangeonfieldmodel;
 
@@ -22,6 +18,12 @@ public class PlayerPresenter : MonoBehaviour
         _playermodel = injectpm;
         _dangeonfieldmodel = injectdfm;
     }
+    #endregion
+
+    [SerializeField]
+    PlayerView _playerview;
+    [SerializeField]
+    MoveButtonView[] _moveButtonView;
 
     void Awake ()
     {
@@ -64,13 +66,14 @@ public class PlayerPresenter : MonoBehaviour
             });
 
         // player postion get
-        var tmpvec3 = new Vector3();
-        _playerview.UpdateAsObservable()
+        var tmpvec3 = new Vector3 ();
+        _playerview.UpdateAsObservable ()
             .Subscribe (
-                _ => {
-                tmpvec3.Set(Mathf.Ceil(_playerview.transform.position.x),Mathf.Ceil(_playerview.transform.position.y),0);
-                _playermodel.PlayerPositionVec3RP.Value = tmpvec3;
-            });
+                _ =>
+                {
+                    tmpvec3.Set (Mathf.Ceil (_playerview.transform.position.x), Mathf.Ceil (_playerview.transform.position.y), 0);
+                    _playermodel.PlayerPositionVec3RP.Value = tmpvec3;
+                });
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
         _playerview.OnTriggerEnter2DAsObservable ()
@@ -80,8 +83,8 @@ public class PlayerPresenter : MonoBehaviour
             {
                 // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
                 _playermodel.IsPlayerMovingRP.Value = true;
-                _playermodel.InitInputVec();
-                _playerview.InitPosition();
+                _playermodel.InitInputVec ();
+                _playerview.InitPosition ();
                 _dangeonfieldmodel.FloorNumRP.Value++;
                 _playermodel.IsPlayerMovingRP.Value = false;
             });

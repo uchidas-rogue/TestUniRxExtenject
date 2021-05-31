@@ -7,24 +7,26 @@ using Zenject;
 
 public class DangeonFieldPresenter : MonoBehaviour
 {
-    [SerializeField]
-    public DangeonFieldVeiw _dangeonFieldView;
+    #region injection
     private IDangeonFieldModel _dangeonFieldModel;
-
     private IPlayerModel _playermodel;
-
-    [SerializeField]
-    public int FieldWidth;
-     [SerializeField]
-    public int FieldHeith;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IDangeonFieldModel injectdfm,IPlayerModel injectpm)
+    public void Constructor (IDangeonFieldModel injectdfm, IPlayerModel injectpm)
     {
         _dangeonFieldModel = injectdfm;
         _playermodel = injectpm;
     }
+    #endregion
+
+    [SerializeField]
+    public DangeonFieldVeiw _dangeonFieldView;
+    
+    [SerializeField]
+    public int FieldWidth;
+    [SerializeField]
+    public int FieldHeith;
 
     void Awake ()
     {
@@ -32,7 +34,7 @@ public class DangeonFieldPresenter : MonoBehaviour
             num =>
             {
                 Debug.Log ("floornum:" + num);
-                SetFieldSize(num);
+                SetFieldSize (num);
                 _dangeonFieldView.RemoveAllTiles ();
                 _dangeonFieldModel.MakeField (FieldWidth, FieldHeith);
                 SetField ();

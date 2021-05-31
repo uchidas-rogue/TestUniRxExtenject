@@ -8,14 +8,10 @@ using Zenject;
 
 public class MiniMapPresenter : MonoBehaviour
 {
-    [SerializeField]
-    MiniMapView _minimapview;
-
+    #region injection
     IMiniMapModel _minimapmodel;
     IDangeonFieldModel _dangeonfieldmodel;
     IPlayerModel _playermodel;
-
-    private StringBuilder mapStringBuilder = new StringBuilder ();
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
@@ -26,24 +22,34 @@ public class MiniMapPresenter : MonoBehaviour
         _playermodel = injectpm;
     }
 
+    #endregion
+
+    [SerializeField]
+    MiniMapView _minimapview;
+    private StringBuilder mapStringBuilder = new StringBuilder ();
+
     void Awake ()
     {
         _minimapview.OnClick ()
             .Subscribe (_ =>
             {
-                _minimapmodel.isPickupRP.Value = !_minimapmodel.isPickupRP.Value;
+                _minimapmodel.IsPickupRP.Value = !_minimapmodel.IsPickupRP.Value;
             });
 
-        _minimapmodel.isPickupRP
+        _minimapmodel.IsPickupRP
             .Subscribe (isPickup =>
             {
                 if (isPickup)
                 {
-                    _minimapview.ChangeMapSize (new Vector3 (0f, 0f, 0f), new Vector2 (2220f, 1040f), 70f);
+                    _minimapview.ChangeMapSize (
+                        _minimapmodel.PickedMapPositionVec3, _minimapmodel.PiciedMapSizeVec2, 70f
+                    );
                 }
                 else
                 {
-                    _minimapview.ChangeMapSize (new Vector3 (720f, 320f, 0f), new Vector2 (800f, 420f), 20f);
+                    _minimapview.ChangeMapSize (
+                        _minimapmodel.MiniMapPositionVec3, _minimapmodel.MiniMapSizeVec2, 20f
+                    );
                 }
             });
 
@@ -55,48 +61,41 @@ public class MiniMapPresenter : MonoBehaviour
             });
     }
 
-    public void CheckFloor (int x, int y)
+    /// <summary>
+    /// 歩いた場所かどうかをチェックする
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void CheckWalkedTile (int x, int y)
     {
         if (_dangeonfieldmodel.Field[x, y, 1] == 0)
-        {// チェックしてないタイルなら
+        { // チェックしてないタイルなら
+            // チェック済にする
             _dangeonfieldmodel.Field[x, y, 1] = 1;
-            if(_dangeonfieldmodel.Field[x, y, 0] == 2)
-            {// まだフロア内なら
-                TurnToWalked (x, y);
+            if (_dangeonfieldmodel.Field[x, y, 0] == 2)
+            { // まだフロア内なら
+                // さらに周りを調べに行く
+                StartCheckWalkedTiles (x, y);
             }
         }
     }
 
-    public void TurnToWalked (int x, int y)
+    public void StartCheckWalkedTiles (int x, int y)
     {
-        if (_dangeonfieldmodel.Field[x, y, 0] == 2)
-        {// フロア内なら周り全て見に行く
-            CheckFloor (x - 1, y - 1);
-            CheckFloor (x - 1, y);
-            CheckFloor (x - 1, y + 1);
-            CheckFloor (x, y - 1);
-            CheckFloor (x, y + 1);
-            CheckFloor (x + 1, y - 1);
-            CheckFloor (x + 1, y);
-            CheckFloor (x + 1, y + 1);
-        }
-        else
-        {// フロア外なら問答無用で周り全てチェック済にする
-            _dangeonfieldmodel.Field[x - 1, y - 1, 1] = 1;
-            _dangeonfieldmodel.Field[x - 1, y, 1] = 1;
-            _dangeonfieldmodel.Field[x - 1, y + 1, 1] = 1;
-            _dangeonfieldmodel.Field[x, y - 1, 1] = 1;
-            _dangeonfieldmodel.Field[x, y + 1, 1] = 1;
-            _dangeonfieldmodel.Field[x + 1, y - 1, 1] = 1;
-            _dangeonfieldmodel.Field[x + 1, y, 1] = 1;
-            _dangeonfieldmodel.Field[x + 1, y + 1, 1] = 1;
-        }
+        // 八方向全てチェックしに行く
+        CheckWalkedTile (x - 1, y - 1);
+        CheckWalkedTile (x - 1, y);
+        CheckWalkedTile (x - 1, y + 1);
+        CheckWalkedTile (x, y - 1);
+        CheckWalkedTile (x, y + 1);
+        CheckWalkedTile (x + 1, y - 1);
+        CheckWalkedTile (x + 1, y);
+        CheckWalkedTile (x + 1, y + 1);
     }
     public string MakeMiniMapString (int playerposx, int playerposy)
     {
         mapStringBuilder.Clear ();
-
-        TurnToWalked (playerposx, playerposy);
+        StartCheckWalkedTiles (playerposx, playerposy);
 
         for (int x = _dangeonfieldmodel.Field.GetLength (0) - 1; x >= 0; x--)
         {
