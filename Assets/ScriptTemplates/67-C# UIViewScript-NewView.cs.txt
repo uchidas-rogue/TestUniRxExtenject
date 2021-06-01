@@ -1,0 +1,10 @@
+using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UniRx.Triggers;
+
+public class #SCRIPTNAME# : MonoBehaviour
+{
+    # click event
+    public IObservable<PointerEventData> OnClick()=>eventTrigger.OnPointerClickAsObservable();
+}

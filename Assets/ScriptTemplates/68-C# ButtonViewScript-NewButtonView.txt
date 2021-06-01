@@ -1,0 +1,12 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+using UniRx;
+
+public class #SCRIPTNAME# : MonoBehaviour
+{
+    [SerializeField]
+    public Button thisButton;
+
+    public IObservable<Unit> OnClick () => thisButton.onClick.AsObservable ();
+}

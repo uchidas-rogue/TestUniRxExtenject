@@ -1,0 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
+using Zenject;
+
+public class #SCRIPTNAME# : MonoBehaviour
+{
+    #region injection
+    #endregion
+
+    #region viewscript
+    #endregion
+
+    void Awake ()
+    {
+        #NOTRIM#
+    }
+}
