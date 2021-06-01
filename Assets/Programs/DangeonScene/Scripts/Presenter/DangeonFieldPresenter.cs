@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using UniRx;
 using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
 using Zenject;
 
 public class DangeonFieldPresenter : MonoBehaviour
@@ -34,7 +35,6 @@ public class DangeonFieldPresenter : MonoBehaviour
             num =>
             {
                 _dangeonFieldModel.IsFieldSetting.Value = true;
-                Debug.Log ("floornum:" + num);
                 SetFieldSize ();
                 _dangeonFieldView.RemoveAllTiles ();
                 _dangeonFieldModel.MakeField (FieldWidth, FieldHeith, num);

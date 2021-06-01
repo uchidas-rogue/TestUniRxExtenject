@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UniRx.Triggers;
-using System;
-using UniRx;
 
 public class MiniMapView : MonoBehaviour
 {
@@ -30,6 +28,6 @@ public class MiniMapView : MonoBehaviour
         maptextGUI.characterSpacing = -11.6f;
     }
 
-    public IObservable<UnityEngine.EventSystems.PointerEventData> OnClick()=>eventTrigger.OnPointerClickAsObservable();
+    public IObservable<PointerEventData> OnClick()=>eventTrigger.OnPointerClickAsObservable();
 
 }
