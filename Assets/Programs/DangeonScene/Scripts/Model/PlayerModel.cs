@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerModel : IPlayerModel
 {
     public Vector3ReactiveProperty PlayerInputVec3RP { get; set; } = new Vector3ReactiveProperty ();
-    public BoolReactiveProperty IsPlayerMovingRP { get; set; } = new BoolReactiveProperty (false);
     public ReactiveProperty<Direction> DirectionPlayerRP { get; set; } = new ReactiveProperty<Direction> (Direction.none);
     public Vector3ReactiveProperty PlayerPositionVec3RP { get; set; } = new Vector3ReactiveProperty ();
 
@@ -14,7 +13,6 @@ public class PlayerModel : IPlayerModel
 
     public void ChangeVec3 (float x, float y)
     {
-        IsPlayerMovingRP.Value = true;
         InitInputVec ();
 
         if (x != 0) x = x > 0f ? 1f : -1f;
@@ -24,8 +22,6 @@ public class PlayerModel : IPlayerModel
 
         vector3.Set (x, y, 0f);
         PlayerInputVec3RP.Value = vector3;
-
-        IsPlayerMovingRP.Value = false;
     }
 
     public void InitInputVec ()

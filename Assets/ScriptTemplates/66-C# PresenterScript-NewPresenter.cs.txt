@@ -8,6 +8,14 @@ using Zenject;
 public class #SCRIPTNAME# : MonoBehaviour
 {
     #region injection
+
+
+    // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
+    [Inject]
+    public void Constructor ()
+    {
+        #NOTRIM#
+    }
     #endregion
 
     #region viewscript

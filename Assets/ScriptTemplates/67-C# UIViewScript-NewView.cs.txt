@@ -5,6 +5,9 @@ using UniRx.Triggers;
 
 public class #SCRIPTNAME# : MonoBehaviour
 {
+    [SerializeField]
+    private ObservableEventTrigger eventTrigger;
+
     # click event
     public IObservable<PointerEventData> OnClick()=>eventTrigger.OnPointerClickAsObservable();
 }

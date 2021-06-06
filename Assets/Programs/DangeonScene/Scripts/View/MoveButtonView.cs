@@ -1,12 +1,12 @@
 using System;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.UI;
-
+using UnityEngine.EventSystems;
 public class MoveButtonView : MonoBehaviour
 {
     [SerializeField]
-    public Button movebutton;
+    private ObservableEventTrigger eventTrigger;
     /// <summary>
     /// 移動方向を示す数値 水平方向
     /// </summary>
@@ -18,5 +18,7 @@ public class MoveButtonView : MonoBehaviour
     [SerializeField]
     public float vectorY;
 
-    public IObservable<Unit> movebutton_OnClick () => movebutton.onClick.AsObservable ();
+    public IObservable<PointerEventData> movebutton_OnDown () => eventTrigger.OnPointerDownAsObservable ();
+    public IObservable<PointerEventData> movebutton_OnUp () => eventTrigger.OnPointerUpAsObservable ();
+
 }

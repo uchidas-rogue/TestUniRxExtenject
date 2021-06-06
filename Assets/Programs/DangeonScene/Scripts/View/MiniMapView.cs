@@ -18,14 +18,15 @@ public class MiniMapView : MonoBehaviour
         maptextGUI.text = minimapstring;
     }
 
-    public void ChangeMapSize (Vector3 mappos, Vector2 mapsize, float fontSize)
+    public void ChangeMapSize (Vector3 mappos, Vector2 mapsize)
     {
         minimapRect.localPosition = mappos;
         minimapRect.sizeDelta = mapsize;
-        maptextGUI.fontSize = fontSize;
-        maptextGUI.alignment = TextAlignmentOptions.MidlineJustified;
+        maptextGUI.enableAutoSizing = true;
+        maptextGUI.enableWordWrapping = false;
         maptextGUI.lineSpacing = -66.5f;
         maptextGUI.characterSpacing = -11.6f;
+
     }
 
     public IObservable<PointerEventData> OnClick()=>eventTrigger.OnPointerClickAsObservable();

@@ -7,10 +7,12 @@ using UnityEngine;
 /// </summary>
 public abstract class MovingObject : MonoBehaviour
 {
+    public bool IsObjectMoving { get; set; } = false;
+
     [SerializeField]
     public LayerMask BlockingLayer;
     [SerializeField]
-    public float MoveTime = 0.05f;
+    public float MoveTime = 0.1f;
     [SerializeField]
     private BoxCollider2D boxCollider;
     [SerializeField]
@@ -34,6 +36,7 @@ public abstract class MovingObject : MonoBehaviour
             this.sqrRemainingDistance = (transformCash.position - end).sqrMagnitude;
             yield return null;
         }
+        IsObjectMoving = false;
     }
 
     private Vector2 GetTmpVec2 (int xDir, int yDir)
@@ -42,11 +45,17 @@ public abstract class MovingObject : MonoBehaviour
         return this.tmpVec2;
     }
 
+    /// <summary>
+    /// 移動先に何らかの物体があるかどうかチェックする
+    /// 何もない場合はSmoothMovementを呼んで移動する
+    /// 移動した場合はtrueを返す
+    /// </summary>
+    /// <param name="xDir"></param>
+    /// <param name="yDir"></param>
+    /// <param name="hit"></param>
+    /// <returns></returns>
     protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
     {
-        //移動先に何らかの物体があるかどうかチェックする。
-        //何もない場合はSmoothMovementを呼んで移動する。
-        //移動した場合はtrueを返す。
         //Vector2 start = transform.position;
         //Vector2 end = (start + new Vector2 (xDir, yDir));
 
@@ -96,7 +105,7 @@ public abstract class MovingObject : MonoBehaviour
         //MoveやOnCantMoveといった移動処理に関する一連の処理を呼び出す。
         //外部のクラスからこのオブジェクトを移動させるための入り口。
         RaycastHit2D raycasthit2d;
-        Move (xDir, yDir, out raycasthit2d);
+        IsObjectMoving = Move (xDir, yDir, out raycasthit2d);
     }
 
     #region spritechange
