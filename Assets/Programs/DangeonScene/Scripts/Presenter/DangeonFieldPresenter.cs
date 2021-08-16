@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
+using UnityEngine;
 using Zenject;
 
 public class DangeonFieldPresenter : MonoBehaviour
@@ -39,6 +39,7 @@ public class DangeonFieldPresenter : MonoBehaviour
                 _dangeonFieldView.RemoveAllTiles ();
                 _dangeonFieldModel.MakeField (FieldWidth, FieldHeith, num);
                 SetField ();
+                //StartCheckWalkedTilesTest(49,49);
                 _dangeonFieldModel.IsFieldSetting.Value = false;
             }
         );
@@ -50,6 +51,41 @@ public class DangeonFieldPresenter : MonoBehaviour
         //     });
 
     }
+
+    #region WalkedMapTest
+
+    /// <summary>
+    /// 歩いた場所かどうかをチェックする
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void CheckWalkedTileTest (int x, int y)
+    {
+        if (_dangeonFieldModel.Field[x, y, 1] == 0)
+        { // チェックしてないタイルなら
+            // チェック済にする
+            _dangeonFieldModel.Field[x, y, 1] = 1;
+            if (_dangeonFieldModel.Field[x, y, 0] != 0)
+            { // 壁以外なら
+                // さらに周りを調べに行く
+                StartCheckWalkedTilesTest (x, y);
+            }
+        }
+    }
+
+    public void StartCheckWalkedTilesTest (int x, int y)
+    {
+        // 八方向全てチェックしに行く
+        CheckWalkedTileTest (x - 1, y - 1);
+        CheckWalkedTileTest (x - 1, y);
+        CheckWalkedTileTest (x - 1, y + 1);
+        CheckWalkedTileTest (x, y - 1);
+        CheckWalkedTileTest (x, y + 1);
+        CheckWalkedTileTest (x + 1, y - 1);
+        CheckWalkedTileTest (x + 1, y);
+        CheckWalkedTileTest (x + 1, y + 1);
+    }
+    #endregion
 
     public void SetFieldSize ()
     {
