@@ -41,14 +41,28 @@ public class MiniMapPresenter : MonoBehaviour
             {
                 if (isPickup)
                 {
+                    if (_dangeonFieldModel.Field != null)
+                    {
+                        _minimapview.SetMiniMapText (
+                            this.MakeMiniMapPickedString (
+                                (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
+                        );
+                    }
                     _minimapview.ChangeMapSize (
                         _minimapModel.PickedMapPositionVec3, _minimapModel.PiciedMapSizeVec2
                     );
                 }
                 else
                 {
+                    if (_dangeonFieldModel.Field != null)
+                    {
+                        _minimapview.SetMiniMapText (
+                            this.MakeMiniMapString (
+                                (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
+                        );
+                    }
                     _minimapview.ChangeMapSize (
-                        _minimapModel.MiniMapPositionVec3, _minimapModel.MiniMapSizeVec2
+                        _minimapModel.MiniMapPositionVec3, _minimapModel.MiniMapSizeVec2, false
                     );
                 }
             });
@@ -57,7 +71,8 @@ public class MiniMapPresenter : MonoBehaviour
             .Where (_ => _dangeonFieldModel.Field != null)
             .Subscribe (ppos =>
             {
-                _minimapview.SetMiniMapText (MakeMiniMapString ((int) ppos.x, (int) ppos.y));
+                StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
+                _minimapview.SetMiniMapText (this.MakeMiniMapString ((int) ppos.x, (int) ppos.y));
             });
     }
 
@@ -83,7 +98,7 @@ public class MiniMapPresenter : MonoBehaviour
     public void StartCheckWalkedTiles (int x, int y)
     {
         if (_dangeonFieldModel.Field[x, y, 0] == 2)
-        {// player in floor
+        { // player in floor
             // 八方向全てチェックしに行く
             CheckWalkedTile (x - 1, y - 1);
             CheckWalkedTile (x - 1, y);
@@ -95,7 +110,7 @@ public class MiniMapPresenter : MonoBehaviour
             CheckWalkedTile (x + 1, y + 1);
         }
         else
-        {// これないとフロアに入る前にフロアがマップにでる
+        { // これないとフロアに入る前にフロアがマップにでる
             _dangeonFieldModel.Field[x - 1, y - 1, 1] = 1;
             _dangeonFieldModel.Field[x - 1, y, 1] = 1;
             _dangeonFieldModel.Field[x - 1, y + 1, 1] = 1;
@@ -107,56 +122,83 @@ public class MiniMapPresenter : MonoBehaviour
         }
 
     }
+
     public string MakeMiniMapString (int playerposx, int playerposy)
     {
         mapStringBuilder.Clear ();
-        StartCheckWalkedTiles (playerposx, playerposy);
 
-        for (int x = _dangeonFieldModel.Field.GetLength (0) - 1; x >= 0; x--)
+        for (int y = playerposy + 7; y >= playerposy - 7; y--)
         {
-            for (int y = 0; y < _dangeonFieldModel.Field.GetLength (1); y++)
+            for (int x = playerposx - 7; x <= playerposx + 7; x++)
             {
-                if (y == playerposx && x == playerposy)
-                { //player position
-                    mapStringBuilder.Append ("<color=yellow>●</color>");
-                }
-                else if (_dangeonFieldModel.Field[y, x, 0] == 3)
-                { //exit position
-                    if (_dangeonFieldModel.Field[y, x, 1] == 1)
-                    {
-                        mapStringBuilder.Append ("<color=green>■</color>");
-                    }
-                    else
-                    {
-                        mapStringBuilder.Append ("   ");
-                    }
-                }
-                else if (_dangeonFieldModel.Field[y, x, 0] == 1 || _dangeonFieldModel.Field[y, x, 0] == 2)
-                { //floor position
-                    if (_dangeonFieldModel.Field[y, x, 1] == 1)
-                    {
-                        mapStringBuilder.Append ("<color=blue>■</color>");
-                    }
-                    else
-                    {
-                        mapStringBuilder.Append ("   ");
-                    }
-                }
-                else
-                { //wall position
-                    if (_dangeonFieldModel.Field[y, x, 1] == 1)
-                    {
-                        mapStringBuilder.Append ("■");
-                    }
-                    else
-                    {
-                        mapStringBuilder.Append ("   ");
-                    }
-                }
+                ConvObjtoRichtext (playerposx, playerposy, x, y);
             }
             mapStringBuilder.AppendLine ("");
         }
         return mapStringBuilder.ToString ();
+    }
+
+    public string MakeMiniMapPickedString (int playerposx, int playerposy)
+    {
+        mapStringBuilder.Clear ();
+
+        for (int y = _dangeonFieldModel.Field.GetLength (0) - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < _dangeonFieldModel.Field.GetLength (1); x++)
+            {
+                ConvObjtoRichtext (playerposx, playerposy, x, y);
+            }
+            mapStringBuilder.AppendLine ("");
+        }
+        return mapStringBuilder.ToString ();
+    }
+
+    /// <summary>
+    /// それぞれのオブジェクトをリッチテキストに置き換える
+    /// </summary>
+    /// <param name="playerposx"></param>
+    /// <param name="playerposy"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y)
+    {
+        if (x == playerposx && y == playerposy)
+        { //player position
+            mapStringBuilder.Append ("<color=yellow>●</color>");
+        }
+        else if (_dangeonFieldModel.Field[x, y, 0] == 3)
+        { //exit position
+            if (_dangeonFieldModel.Field[x, y, 1] == 1)
+            {
+                mapStringBuilder.Append ("<color=green>■</color>");
+            }
+            else
+            {
+                mapStringBuilder.Append ("   ");
+            }
+        }
+        else if (_dangeonFieldModel.Field[x, y, 0] == 1 || _dangeonFieldModel.Field[x, y, 0] == 2)
+        { //floor position
+            if (_dangeonFieldModel.Field[x, y, 1] == 1)
+            {
+                mapStringBuilder.Append ("<color=blue>■</color>");
+            }
+            else
+            {
+                mapStringBuilder.Append ("   ");
+            }
+        }
+        else
+        { //wall position
+            if (_dangeonFieldModel.Field[x, y, 1] == 1)
+            {
+                mapStringBuilder.Append ("■");
+            }
+            else
+            {
+                mapStringBuilder.Append ("   ");
+            }
+        }
     }
 
 }
