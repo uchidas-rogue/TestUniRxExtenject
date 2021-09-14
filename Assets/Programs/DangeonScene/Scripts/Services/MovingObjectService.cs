@@ -13,7 +13,7 @@ namespace TestUniRxExtenject.Assets.Programs.DangeonScene.Scripts.Services
         [SerializeField]
         public LayerMask BlockingLayer;
         [SerializeField]
-        private float MoveTime = 1f;
+        private float MoveTime = 0.2f;
         [SerializeField]
         private BoxCollider2D boxCollider;
         [SerializeField]

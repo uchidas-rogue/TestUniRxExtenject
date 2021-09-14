@@ -48,7 +48,7 @@ public class PlayerPresenter : MonoBehaviour
                 .RepeatUntilDestroy (_moveBtn)
                 .Subscribe (_ =>
                 {
-                    Debug.Log ("press!");
+                    //Debug.Log ("press!");
                     _playerModel.ChangeVec3 (_moveBtn.vectorX, _moveBtn.vectorY);
                 });
         }
@@ -56,7 +56,7 @@ public class PlayerPresenter : MonoBehaviour
         // PlayerInputVec3RPの変更によって呼び出すように登録する
         _playerModel.PlayerInputVec3RP
             .Subscribe (
-                dvec3 => { _playerview.Move (dvec3); Debug.Log(dvec3); }
+                dvec3 => { _playerview.Move (dvec3); }
             );
         // 移動時のキャラ絵の変更
         _playerModel.DirectionPlayerRP
