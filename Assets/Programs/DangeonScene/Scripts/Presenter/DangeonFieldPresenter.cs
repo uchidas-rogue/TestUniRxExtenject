@@ -89,7 +89,7 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     public void SetFieldSize ()
     {
-        // NG size under 7
+        // NG size under 101
         FieldWidth = FieldWidth < 101 ? 101 : FieldWidth;
         FieldHeith = FieldHeith < 101 ? 101 : FieldHeith;
         // NG even number
@@ -105,16 +105,16 @@ public class DangeonFieldPresenter : MonoBehaviour
             {
                 switch (_dangeonFieldModel.Field[x, y, 0])
                 {
-                    case 0:
+                    case (int) FieldClass.wall:
                         _dangeonFieldView.SetTile (_dangeonFieldView.wallTiles[(int) Wall.wallreaf], x, y);
                         break;
-                    case 1:
+                    case (int) FieldClass.path:
                         _dangeonFieldView.SetTile (_dangeonFieldView.floorTiles[(int) Floor.rocktile], x, y);
                         break;
-                    case 2:
+                    case (int) FieldClass.floor:
                         _dangeonFieldView.SetTile (_dangeonFieldView.floorTiles[(int) Floor.rocktile], x, y);
                         break;
-                    case 3:
+                    case (int) FieldClass.exit:
                         _dangeonFieldView.SetTile (_dangeonFieldView.stairsTile, x, y);
                         break;
                     default:

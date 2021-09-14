@@ -213,7 +213,7 @@ public class DangeonFieldModel : IDangeonFieldModel
                 {
                     //(Field[x-entry,y]),(Field[x-entry,y+(size-1)])
                     //(Field[x-entry+size-1,y]),(Field[x-entry+size-1,y+(size-1)])
-                    Field[this.x - roomEntryX + i, this.y + j * (int) direction, 0] = 2;
+                    Field[this.x - roomEntryX + i, this.y + j * (int) direction, 0] = (int) FieldClass.floor;
                 }
             }
             roomNumber++;
@@ -226,7 +226,7 @@ public class DangeonFieldModel : IDangeonFieldModel
                 {
                     //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
                     //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
-                    Field[this.x + i * ((int) direction / Mathf.Abs ((int) direction)), this.y - roomEntryY + j, 0] = 2;
+                    Field[this.x + i * ((int) direction / Mathf.Abs ((int) direction)), this.y - roomEntryY + j, 0] = (int) FieldClass.floor;
                 }
             }
             roomNumber++;
@@ -238,16 +238,16 @@ public class DangeonFieldModel : IDangeonFieldModel
         if (direction == Direction.up || direction == Direction.down)
         {
             this.y += (int) direction;
-            Field[this.x, this.y, 0] = 1;
+            Field[this.x, this.y, 0] = ((int) FieldClass.path);
             this.y += (int) direction;
-            Field[this.x, this.y, 0] = 1;
+            Field[this.x, this.y, 0] = ((int) FieldClass.path);
         }
         else // if (direction == Direction.left || direction == Direction.right)
         {
             this.x += ((int) direction / Mathf.Abs ((int) direction));
-            Field[this.x, this.y, 0] = 1;
+            Field[this.x, this.y, 0] = ((int) FieldClass.path);
             this.x += ((int) direction / Mathf.Abs ((int) direction));
-            Field[this.x, this.y, 0] = 1;
+            Field[this.x, this.y, 0] = ((int) FieldClass.path);
         }
     }
 
@@ -257,7 +257,7 @@ public class DangeonFieldModel : IDangeonFieldModel
         if (StairsSuggestList.Count != 0)
         {
             int randomListNum = Random.Range (0, StairsSuggestList.Count);
-            Field[StairsSuggestList[randomListNum][0], StairsSuggestList[randomListNum][1], 0] = 3;
+            Field[StairsSuggestList[randomListNum][0], StairsSuggestList[randomListNum][1], 0] = ((int) FieldClass.exit);
         }
     }
     #endregion Method

@@ -1,3 +1,4 @@
+using TestUniRxExtenject.Assets.Programs.DangeonScene.Scripts.Services;
 using UnityEngine;
 using Zenject;
 
@@ -20,10 +21,10 @@ public class DangeonSceneInstaller : MonoInstaller
             .NonLazy ();
 
         Container
-            .Bind<IMiniMapModel>()
-            .To<MiniMapModel>()
-            .FromNew()
-            .AsSingle()
-            .NonLazy();
+            .Bind<IMiniMapModel> ()
+            .To<MiniMapModel> ()
+            .FromNew ()
+            .AsSingle ()
+            .NonLazy ();
     }
 }

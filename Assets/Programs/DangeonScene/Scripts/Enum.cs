@@ -15,7 +15,15 @@ public enum Direction
     none = -100
 }
 
-public enum Floor 
+public enum FieldClass
+{
+    wall,
+    path,
+    floor,
+    exit
+}
+
+public enum Floor
 {
     rocktile
 }

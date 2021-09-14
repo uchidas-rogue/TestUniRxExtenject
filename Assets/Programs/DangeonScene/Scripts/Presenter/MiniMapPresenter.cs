@@ -31,6 +31,7 @@ public class MiniMapPresenter : MonoBehaviour
     void Awake ()
     {
         _minimapview.OnClick ()
+            .ThrottleFirst (System.TimeSpan.FromSeconds (1f)) // 実行間隔の指定
             .Subscribe (_ =>
             {
                 _minimapModel.IsPickupRP.Value = !_minimapModel.IsPickupRP.Value;
@@ -129,7 +130,7 @@ public class MiniMapPresenter : MonoBehaviour
 
         for (int y = playerposy + 7; y >= playerposy - 7; y--)
         {
-            for (int x = playerposx - 7; x <= playerposx + 7; x++)
+            for (int x = playerposx - 10; x <= playerposx + 10; x++)
             {
                 ConvObjtoRichtext (playerposx, playerposy, x, y);
             }

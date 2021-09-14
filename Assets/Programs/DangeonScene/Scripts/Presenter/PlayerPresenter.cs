@@ -48,7 +48,7 @@ public class PlayerPresenter : MonoBehaviour
                 .RepeatUntilDestroy (_moveBtn)
                 .Subscribe (_ =>
                 {
-                    //Debug.Log ("press!");
+                    Debug.Log ("press!");
                     _playerModel.ChangeVec3 (_moveBtn.vectorX, _moveBtn.vectorY);
                 });
         }
@@ -56,7 +56,7 @@ public class PlayerPresenter : MonoBehaviour
         // PlayerInputVec3RPの変更によって呼び出すように登録する
         _playerModel.PlayerInputVec3RP
             .Subscribe (
-                dvec3 => _playerview.Move (dvec3)
+                dvec3 => { _playerview.Move (dvec3); Debug.Log(dvec3); }
             );
         // 移動時のキャラ絵の変更
         _playerModel.DirectionPlayerRP
@@ -65,7 +65,18 @@ public class PlayerPresenter : MonoBehaviour
             );
 
         // playerの位置が変わった時の処理
-        // _playerModel.PlayerPositionVec3RP.Subscribe (Pos => Debug.Log (Pos.x + "," + Pos.y));
+        _playerModel.PlayerPositionVec3RP
+            .Subscribe (
+                //Pos => Debug.Log (Pos.x + "," + Pos.y)
+                ppos =>
+                {
+                    if (_dangeonFieldModel.Field[(int) ppos.x, (int) ppos.y, 0] == (int) FieldClass.floor)
+                    {
+                        //todo
+                        _playerview.CreateFovFloor(ppos);
+                    }
+                }
+            );
 
         // フロア変わったら初期位置に移動
         _dangeonFieldModel.FloorNumRP
