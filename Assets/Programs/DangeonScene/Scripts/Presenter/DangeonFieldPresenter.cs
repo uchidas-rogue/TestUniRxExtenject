@@ -23,6 +23,8 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     [SerializeField]
     public DangeonFieldVeiw _dangeonFieldView;
+    [SerializeField]
+    public PlayerView _playerView;
 
     [SerializeField]
     public int FieldWidth;
@@ -31,18 +33,24 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     void Awake ()
     {
-        _dangeonFieldModel.FloorNumRP.Subscribe (
-            num =>
-            {
-                _dangeonFieldModel.IsFieldSetting.Value = true;
-                SetFieldSize ();
-                _dangeonFieldView.RemoveAllTiles ();
-                _dangeonFieldModel.MakeField (FieldWidth, FieldHeith, num);
-                SetField ();
-                //StartCheckWalkedTilesTest(49,49);
-                _dangeonFieldModel.IsFieldSetting.Value = false;
-            }
-        );
+        _dangeonFieldModel.FloorNumRP
+            .Subscribe (
+                num =>
+                {
+                    _dangeonFieldModel.IsFieldSetting.Value = true;
+
+                    _playerView.InitPosition ();
+                    _playermodel.InitInputVec ();
+
+                    SetFieldSize ();
+                    _dangeonFieldView.RemoveAllTiles ();
+                    _dangeonFieldModel.MakeField (FieldWidth, FieldHeith, num);
+                    SetField ();
+                    //StartCheckWalkedTilesTest(49,49);
+
+                    _dangeonFieldModel.IsFieldSetting.Value = false;
+                }
+            );
 
         // Observable.Timer (System.TimeSpan.FromSeconds (2), System.TimeSpan.FromSeconds (4))
         //     .Subscribe (_ =>

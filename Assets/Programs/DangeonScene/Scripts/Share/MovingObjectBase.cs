@@ -1,14 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using DG.Tweening;
 using UnityEngine;
 
-namespace TestUniRxExtenject.Assets.Programs.DangeonScene.Scripts.Services
+public class MovingObjectBase : MonoBehaviour
 {
-    public class MovingObjectService : MonoBehaviour
-    {
-        public bool IsObjectMoving { get; set; } = false;
+    public bool IsObjectMoving { get; set; } = false;
 
         [SerializeField]
         public LayerMask BlockingLayer;
@@ -22,9 +17,13 @@ namespace TestUniRxExtenject.Assets.Programs.DangeonScene.Scripts.Services
         protected Transform transformCash;
         private Vector2 tmpVec2 = new Vector2 (0, 0);
 
-        private void ActualMove (Vector3 vector3)
+        /// <summary>
+        /// 実際に移動処理
+        /// </summary>
+        /// <param name="inpVec3"></param>
+        private void ActualMove (Vector3 inpVec3)
         {
-            var endvec3 = (transformCash.position + vector3);
+            var endvec3 = (transformCash.position + inpVec3);
             if (endvec3 != Vector3.zero)
             {
                 IsObjectMoving = true;
@@ -34,14 +33,18 @@ namespace TestUniRxExtenject.Assets.Programs.DangeonScene.Scripts.Services
             }
         }
 
-        public void AttemptMove (Vector3 vector3)
+        /// <summary>
+        /// 入力方向への移動を試す
+        /// </summary>
+        /// <param name="inpVec3"></param>
+        public void AttemptMove (Vector3 inpVec3)
         {
             RaycastHit2D hit;
             boxCollider.enabled = false;
 
             hit = Physics2D.Linecast (
                 (Vector2) transformCash.position,
-                ((Vector2) transformCash.position + (Vector2) vector3),
+                ((Vector2) transformCash.position + (Vector2) inpVec3),
                 BlockingLayer);
 
             // 斜めの壁抜け防止
@@ -69,7 +72,7 @@ namespace TestUniRxExtenject.Assets.Programs.DangeonScene.Scripts.Services
 
             if (hit.transform == null)
             {
-                ActualMove (vector3);
+                ActualMove (inpVec3);
             }
         }
 
@@ -96,5 +99,4 @@ namespace TestUniRxExtenject.Assets.Programs.DangeonScene.Scripts.Services
         }
 
         #endregion
-    }
 }

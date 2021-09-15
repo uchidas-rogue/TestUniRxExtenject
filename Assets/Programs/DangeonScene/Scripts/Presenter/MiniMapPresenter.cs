@@ -26,7 +26,6 @@ public class MiniMapPresenter : MonoBehaviour
 
     [SerializeField]
     MiniMapView _minimapview;
-    private StringBuilder mapStringBuilder = new StringBuilder ();
 
     void Awake ()
     {
@@ -38,6 +37,7 @@ public class MiniMapPresenter : MonoBehaviour
             });
 
         _minimapModel.IsPickupRP
+            //.Where(_=>_dangeonFieldModel.Field != null)
             .Subscribe (isPickup =>
             {
                 if (isPickup)
@@ -45,7 +45,7 @@ public class MiniMapPresenter : MonoBehaviour
                     if (_dangeonFieldModel.Field != null)
                     {
                         _minimapview.SetMiniMapText (
-                            this.MakeMiniMapPickedString (
+                            MakeMiniMapPickedString (
                                 (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
                         );
                     }
@@ -58,7 +58,7 @@ public class MiniMapPresenter : MonoBehaviour
                     if (_dangeonFieldModel.Field != null)
                     {
                         _minimapview.SetMiniMapText (
-                            this.MakeMiniMapString (
+                            MakeMiniMapString (
                                 (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
                         );
                     }
@@ -67,62 +67,9 @@ public class MiniMapPresenter : MonoBehaviour
                     );
                 }
             });
-
-        _playerModel.PlayerPositionVec3RP
-            .Where (_ => _dangeonFieldModel.Field != null)
-            .Subscribe (ppos =>
-            {
-                StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
-                _minimapview.SetMiniMapText (this.MakeMiniMapString ((int) ppos.x, (int) ppos.y));
-            });
     }
 
-    /// <summary>
-    /// 歩いた場所かどうかをチェックする
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    public void CheckWalkedTile (int x, int y)
-    {
-        if (_dangeonFieldModel.Field[x, y, 1] == 0)
-        { // チェックしてないタイルなら
-            // チェック済にする
-            _dangeonFieldModel.Field[x, y, 1] = 1;
-            if (_dangeonFieldModel.Field[x, y, 0] == 2)
-            { // まだフロア内なら
-                // さらに周りを調べに行く
-                StartCheckWalkedTiles (x, y);
-            }
-        }
-    }
-
-    public void StartCheckWalkedTiles (int x, int y)
-    {
-        if (_dangeonFieldModel.Field[x, y, 0] == 2)
-        { // player in floor
-            // 八方向全てチェックしに行く
-            CheckWalkedTile (x - 1, y - 1);
-            CheckWalkedTile (x - 1, y);
-            CheckWalkedTile (x - 1, y + 1);
-            CheckWalkedTile (x, y - 1);
-            CheckWalkedTile (x, y + 1);
-            CheckWalkedTile (x + 1, y - 1);
-            CheckWalkedTile (x + 1, y);
-            CheckWalkedTile (x + 1, y + 1);
-        }
-        else
-        { // これないとフロアに入る前にフロアがマップにでる
-            _dangeonFieldModel.Field[x - 1, y - 1, 1] = 1;
-            _dangeonFieldModel.Field[x - 1, y, 1] = 1;
-            _dangeonFieldModel.Field[x - 1, y + 1, 1] = 1;
-            _dangeonFieldModel.Field[x, y - 1, 1] = 1;
-            _dangeonFieldModel.Field[x, y + 1, 1] = 1;
-            _dangeonFieldModel.Field[x + 1, y - 1, 1] = 1;
-            _dangeonFieldModel.Field[x + 1, y, 1] = 1;
-            _dangeonFieldModel.Field[x + 1, y + 1, 1] = 1;
-        }
-
-    }
+    private StringBuilder mapStringBuilder = new StringBuilder ();
 
     public string MakeMiniMapString (int playerposx, int playerposy)
     {

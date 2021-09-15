@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -22,6 +23,8 @@ public class PlayerPresenter : MonoBehaviour
 
     [SerializeField]
     PlayerView _playerview;
+    [SerializeField]
+    MiniMapView _miniMapView;
     [SerializeField]
     MoveButtonView[] _moveButtonView;
 
@@ -66,24 +69,38 @@ public class PlayerPresenter : MonoBehaviour
 
         // playerの位置が変わった時の処理
         _playerModel.PlayerPositionVec3RP
+            .Where (pos => pos != Vector3.zero) // 最初の一回無視する
             .Subscribe (
-                //Pos => Debug.Log (Pos.x + "," + Pos.y)
                 ppos =>
                 {
-                    if (_dangeonFieldModel.Field[(int) ppos.x, (int) ppos.y, 0] == (int) FieldClass.floor)
-                    {
-                        //todo
-                        _playerview.CreateFovFloor(ppos);
-                    }
+                    // if (_dangeonFieldModel.Field[(int) ppos.x, (int) ppos.y, 0] == (int) FieldClass.floor)
+                    // {
+                    //     //todo
+                    //     _playerview.CreateFovFloor (ppos);
+                    // }
+                    StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
+                    _miniMapView.SetMiniMapText (MakeMiniMapString ((int) ppos.x, (int) ppos.y));
                 }
             );
 
-        // フロア変わったら初期位置に移動
-        _dangeonFieldModel.FloorNumRP
+        // player postion get
+        var tmpvec3 = new Vector3 ();
+        _playerview.UpdateAsObservable ()
+            .Subscribe (
+                _ =>
+                {
+                    tmpvec3.Set (Mathf.Ceil (_playerview.transform.position.x), Mathf.Ceil (_playerview.transform.position.y), 0);
+                    _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
+                });
+
+        // unirxでの衝突時の処理の登録 unirx.triggersをusingする
+        _playerview.OnTriggerEnter2DAsObservable ()
+            .Select (collision => collision.tag)
+            .Where (tag => tag == "Stairs")
             .Subscribe (_ =>
             {
-                _playerview.InitPosition ();
-                _playerModel.InitInputVec ();
+                // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
+                _dangeonFieldModel.FloorNumRP.Value++;
             });
 
         // unirxでのupdateみたいなやつ => everyupdate
@@ -114,25 +131,118 @@ public class PlayerPresenter : MonoBehaviour
         //         Debug.Log("press");
         //         _playerModel.ChangeVec3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"));
         //     });
-
-        // player postion get
-        var tmpvec3 = new Vector3 ();
-        _playerview.UpdateAsObservable ()
-            .Subscribe (
-                _ =>
-                {
-                    tmpvec3.Set (Mathf.Ceil (_playerview.transform.position.x), Mathf.Ceil (_playerview.transform.position.y), 0);
-                    _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
-                });
-
-        // unirxでの衝突時の処理の登録 unirx.triggersをusingする
-        _playerview.OnTriggerEnter2DAsObservable ()
-            .Select (collision => collision.tag)
-            .Where (tag => tag == "Stairs")
-            .Subscribe (_ =>
-            {
-                // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
-                _dangeonFieldModel.FloorNumRP.Value++;
-            });
     }
+
+    /// <summary>
+    /// 歩いた場所かどうかをチェックする
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void CheckWalkedTile (int x, int y)
+    {
+        if (_dangeonFieldModel.Field[x, y, 1] == 0)
+        { // チェックしてないタイルなら
+            // チェック済にする
+            _dangeonFieldModel.Field[x, y, 1] = 1;
+            if (_dangeonFieldModel.Field[x, y, 0] == 2)
+            { // まだフロア内なら
+                // さらに周りを調べに行く
+                StartCheckWalkedTiles (x, y);
+            }
+        }
+    }
+
+    public void StartCheckWalkedTiles (int x, int y)
+    {
+        if (_dangeonFieldModel.Field[x, y, 0] == 2)
+        { // player in floor
+            // 八方向全てチェックしに行く
+            CheckWalkedTile (x - 1, y - 1);
+            CheckWalkedTile (x - 1, y);
+            CheckWalkedTile (x - 1, y + 1);
+            CheckWalkedTile (x, y - 1);
+            CheckWalkedTile (x, y + 1);
+            CheckWalkedTile (x + 1, y - 1);
+            CheckWalkedTile (x + 1, y);
+            CheckWalkedTile (x + 1, y + 1);
+        }
+        else
+        { // これないとフロアに入る前にフロアがマップにでる
+            _dangeonFieldModel.Field[x - 1, y - 1, 1] = 1;
+            _dangeonFieldModel.Field[x - 1, y, 1] = 1;
+            _dangeonFieldModel.Field[x - 1, y + 1, 1] = 1;
+            _dangeonFieldModel.Field[x, y - 1, 1] = 1;
+            _dangeonFieldModel.Field[x, y + 1, 1] = 1;
+            _dangeonFieldModel.Field[x + 1, y - 1, 1] = 1;
+            _dangeonFieldModel.Field[x + 1, y, 1] = 1;
+            _dangeonFieldModel.Field[x + 1, y + 1, 1] = 1;
+        }
+
+    }
+
+    private StringBuilder mapStringBuilder = new StringBuilder ();
+
+    public string MakeMiniMapString (int playerposx, int playerposy)
+    {
+        mapStringBuilder.Clear ();
+
+        for (int y = playerposy + 7; y >= playerposy - 7; y--)
+        {
+            for (int x = playerposx - 10; x <= playerposx + 10; x++)
+            {
+                ConvObjtoRichtext (playerposx, playerposy, x, y);
+            }
+            mapStringBuilder.AppendLine ("");
+        }
+        return mapStringBuilder.ToString ();
+    }
+
+    /// <summary>
+    /// それぞれのオブジェクトをリッチテキストに置き換える
+    /// </summary>
+    /// <param name="playerposx"></param>
+    /// <param name="playerposy"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y)
+    {
+        if (x == playerposx && y == playerposy)
+        { //player position
+            mapStringBuilder.Append ("<color=yellow>●</color>");
+        }
+        else if (_dangeonFieldModel.Field[x, y, 0] == 3)
+        { //exit position
+            if (_dangeonFieldModel.Field[x, y, 1] == 1)
+            {
+                mapStringBuilder.Append ("<color=green>■</color>");
+            }
+            else
+            {
+                mapStringBuilder.Append ("   ");
+            }
+        }
+        else if (_dangeonFieldModel.Field[x, y, 0] == 1 || _dangeonFieldModel.Field[x, y, 0] == 2)
+        { //floor position
+            if (_dangeonFieldModel.Field[x, y, 1] == 1)
+            {
+                mapStringBuilder.Append ("<color=blue>■</color>");
+            }
+            else
+            {
+                mapStringBuilder.Append ("   ");
+            }
+        }
+        else
+        { //wall position
+            if (_dangeonFieldModel.Field[x, y, 1] == 1)
+            {
+                mapStringBuilder.Append ("■");
+            }
+            else
+            {
+                mapStringBuilder.Append ("   ");
+            }
+        }
+    }
+
 }

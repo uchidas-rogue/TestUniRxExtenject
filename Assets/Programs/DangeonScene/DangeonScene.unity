@@ -664,6 +664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dangeonFieldView: {fileID: 385204458}
+  _playerView: {fileID: 1786982118}
   FieldWidth: 21
   FieldHeith: 21
 --- !u!4 &385204460
@@ -1564,6 +1565,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerview: {fileID: 1786982118}
+  _miniMapView: {fileID: 41296068}
   _moveButtonView:
   - {fileID: 745159039}
   - {fileID: 95782018}
@@ -1584,7 +1586,7 @@ MonoBehaviour:
   BlockingLayer:
     serializedVersion: 2
     m_Bits: 128
-  MoveTime: 1
+  MoveTime: 0.2
   boxCollider: {fileID: 1786982119}
   rb2d: {fileID: 1786982120}
   transformCash: {fileID: 1786982115}
