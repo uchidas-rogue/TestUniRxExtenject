@@ -17,6 +17,11 @@ public class MovingObjectBase : MonoBehaviour
         protected Transform transformCash;
         private Vector2 tmpVec2 = new Vector2 (0, 0);
 
+        public void KillMoving ()
+        {
+            transformCash.DOKill();
+        }
+
         /// <summary>
         /// 実際に移動処理
         /// </summary>

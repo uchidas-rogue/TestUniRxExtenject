@@ -6,7 +6,7 @@ using UnityEngine;
 public interface IDangeonFieldModel
 {
     IntReactiveProperty FloorNumRP { get; set; }
-    BoolReactiveProperty IsFieldSetting { get; set; }
+    bool IsFieldSetting { get; set; }
     /// <summary>
     /// x,y,z z=0=>field z=1=>map
     /// </summary>

@@ -10,21 +10,17 @@ public class DangeonFieldPresenter : MonoBehaviour
 {
     #region injection
     private IDangeonFieldModel _dangeonFieldModel;
-    private IPlayerModel _playermodel;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IDangeonFieldModel injectdfm, IPlayerModel injectpm)
+    public void Constructor (IDangeonFieldModel injectdfm)
     {
         _dangeonFieldModel = injectdfm;
-        _playermodel = injectpm;
     }
     #endregion
 
     [SerializeField]
     public DangeonFieldVeiw _dangeonFieldView;
-    [SerializeField]
-    public PlayerView _playerView;
 
     [SerializeField]
     public int FieldWidth;
@@ -33,14 +29,11 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     void Awake ()
     {
-        _dangeonFieldModel.FloorNumRP
+         _dangeonFieldModel.FloorNumRP
             .Subscribe (
                 num =>
                 {
-                    _dangeonFieldModel.IsFieldSetting.Value = true;
-
-                    _playerView.InitPosition ();
-                    _playermodel.InitInputVec ();
+                    _dangeonFieldModel.IsFieldSetting = true;
 
                     SetFieldSize ();
                     _dangeonFieldView.RemoveAllTiles ();
@@ -48,7 +41,7 @@ public class DangeonFieldPresenter : MonoBehaviour
                     SetField ();
                     //StartCheckWalkedTilesTest(49,49);
 
-                    _dangeonFieldModel.IsFieldSetting.Value = false;
+                    _dangeonFieldModel.IsFieldSetting = false;
                 }
             );
 

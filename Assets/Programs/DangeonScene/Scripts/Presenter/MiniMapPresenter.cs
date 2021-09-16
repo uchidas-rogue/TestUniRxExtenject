@@ -29,43 +29,41 @@ public class MiniMapPresenter : MonoBehaviour
 
     void Awake ()
     {
+        _minimapview.SetMiniMapText (
+            MakeMiniMapString (
+                (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
+        );
+        _minimapview.ChangeMapSize (
+            _minimapModel.MiniMapPositionVec3, _minimapModel.MiniMapSizeVec2, false
+        );
+
         _minimapview.OnClick ()
             .ThrottleFirst (System.TimeSpan.FromSeconds (1f)) // 実行間隔の指定
             .Subscribe (_ =>
             {
-                _minimapModel.IsPickupRP.Value = !_minimapModel.IsPickupRP.Value;
-            });
-
-        _minimapModel.IsPickupRP
-            //.Where(_=>_dangeonFieldModel.Field != null)
-            .Subscribe (isPickup =>
-            {
-                if (isPickup)
+                if (_minimapModel.IsPickup)
                 {
-                    if (_dangeonFieldModel.Field != null)
-                    {
-                        _minimapview.SetMiniMapText (
-                            MakeMiniMapPickedString (
-                                (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
-                        );
-                    }
+                    _minimapview.SetMiniMapText (
+                        MakeMiniMapPickedString (
+                            (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
+                    );
                     _minimapview.ChangeMapSize (
                         _minimapModel.PickedMapPositionVec3, _minimapModel.PiciedMapSizeVec2
                     );
                 }
                 else
                 {
-                    if (_dangeonFieldModel.Field != null)
-                    {
-                        _minimapview.SetMiniMapText (
-                            MakeMiniMapString (
-                                (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
-                        );
-                    }
+                    _minimapview.SetMiniMapText (
+                        MakeMiniMapString (
+                            (int) _playerModel.PlayerPositionVec3RP.Value.x, (int) _playerModel.PlayerPositionVec3RP.Value.y)
+                    );
                     _minimapview.ChangeMapSize (
                         _minimapModel.MiniMapPositionVec3, _minimapModel.MiniMapSizeVec2, false
                     );
                 }
+
+                _minimapModel.IsPickup = !_minimapModel.IsPickup;
+
             });
     }
 
@@ -110,6 +108,8 @@ public class MiniMapPresenter : MonoBehaviour
     /// <param name="y"></param>
     public void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y)
     {
+        if (_dangeonFieldModel.Field == null) { return; }
+
         if (x == playerposx && y == playerposy)
         { //player position
             mapStringBuilder.Append ("<color=yellow>●</color>");

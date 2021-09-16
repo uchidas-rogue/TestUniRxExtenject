@@ -664,7 +664,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dangeonFieldView: {fileID: 385204458}
-  _playerView: {fileID: 1786982118}
   FieldWidth: 21
   FieldHeith: 21
 --- !u!4 &385204460
@@ -1564,7 +1563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d42a1d42892482496add58b25ef29e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerview: {fileID: 1786982118}
+  _playerView: {fileID: 1786982118}
   _miniMapView: {fileID: 41296068}
   _moveButtonView:
   - {fileID: 745159039}

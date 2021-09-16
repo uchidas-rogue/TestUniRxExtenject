@@ -7,7 +7,7 @@ public class DangeonFieldModel : IDangeonFieldModel
 {
     #region PublicParam
     public IntReactiveProperty FloorNumRP { get; set; } = new IntReactiveProperty (1);
-    public BoolReactiveProperty IsFieldSetting { get; set; } = new BoolReactiveProperty (false);
+    public bool IsFieldSetting { get; set; } = false;
     public int[, , ] Field { get; set; }
     #endregion PublicParam
 

@@ -22,7 +22,7 @@ public class PlayerPresenter : MonoBehaviour
     #endregion
 
     [SerializeField]
-    PlayerView _playerview;
+    PlayerView _playerView;
     [SerializeField]
     MiniMapView _miniMapView;
     [SerializeField]
@@ -30,6 +30,9 @@ public class PlayerPresenter : MonoBehaviour
 
     void Awake ()
     {
+        _playerView.InitPosition ();
+        _playerModel.InitInputVec ();
+
         // button onclick register
         foreach (var _moveBtn in _moveButtonView)
         {
@@ -42,7 +45,7 @@ public class PlayerPresenter : MonoBehaviour
 
             _moveBtn.movebutton_OnDown ()
                 .SelectMany (_ => _moveBtn.UpdateAsObservable ())
-                .Where (_ => !_playerview.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting.Value)
+                .Where (_ => !_playerView.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting)
                 .TakeUntil (_moveBtn.movebutton_OnUp ())
                 // .DoOnCompleted (() =>
                 // {
@@ -59,12 +62,12 @@ public class PlayerPresenter : MonoBehaviour
         // PlayerInputVec3RPの変更によって呼び出すように登録する
         _playerModel.PlayerInputVec3RP
             .Subscribe (
-                dvec3 => { _playerview.Move (dvec3); }
+                dvec3 => { _playerView.Move (dvec3); }
             );
         // 移動時のキャラ絵の変更
         _playerModel.DirectionPlayerRP
             .Subscribe (
-                dir => _playerview.ChangeSprite (dir)
+                dir => _playerView.ChangeSprite (dir)
             );
 
         // playerの位置が変わった時の処理
@@ -80,25 +83,33 @@ public class PlayerPresenter : MonoBehaviour
                     // }
                     StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
                     _miniMapView.SetMiniMapText (MakeMiniMapString ((int) ppos.x, (int) ppos.y));
+
+                    Debug.Log( ppos.x.ToString() + "," + ppos.y.ToString());
                 }
             );
 
         // player postion get
         var tmpvec3 = new Vector3 ();
-        _playerview.UpdateAsObservable ()
+        _playerView.UpdateAsObservable ()
             .Subscribe (
                 _ =>
                 {
-                    tmpvec3.Set (Mathf.Ceil (_playerview.transform.position.x), Mathf.Ceil (_playerview.transform.position.y), 0);
+                    tmpvec3.Set (Mathf.Ceil (_playerView.transform.position.x), Mathf.Ceil (_playerView.transform.position.y), 0);
                     _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
                 });
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
-        _playerview.OnTriggerEnter2DAsObservable ()
+        _playerView.OnTriggerEnter2DAsObservable ()
             .Select (collision => collision.tag)
             .Where (tag => tag == "Stairs")
             .Subscribe (_ =>
             {
+                _playerView.KillMoving();
+                _playerView.InitPosition ();
+                _playerModel.InitInputVec ();
+
+                Debug.Log("init ppos!!!");
+
                 // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
                 _dangeonFieldModel.FloorNumRP.Value++;
             });
