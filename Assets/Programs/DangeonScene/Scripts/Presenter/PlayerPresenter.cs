@@ -83,8 +83,6 @@ public class PlayerPresenter : MonoBehaviour
                     // }
                     StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
                     _miniMapView.SetMiniMapText (MakeMiniMapString ((int) ppos.x, (int) ppos.y));
-
-                    Debug.Log( ppos.x.ToString() + "," + ppos.y.ToString());
                 }
             );
 
@@ -104,11 +102,10 @@ public class PlayerPresenter : MonoBehaviour
             .Where (tag => tag == "Stairs")
             .Subscribe (_ =>
             {
+                // 移動を停止する ないとミニマップが誤動作する
                 _playerView.KillMoving();
                 _playerView.InitPosition ();
                 _playerModel.InitInputVec ();
-
-                Debug.Log("init ppos!!!");
 
                 // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
                 _dangeonFieldModel.FloorNumRP.Value++;
