@@ -32,5 +32,12 @@ public class DangeonSceneInstaller : MonoInstaller
             .FromNew ()
             .AsCached ()
             .NonLazy ();
+
+        Container
+            .Bind<IMoveObjectServece> ()
+            .To<MoveObjectServece> ()
+            .FromNew ()
+            .AsCached ()
+            .NonLazy ();
     }
 }

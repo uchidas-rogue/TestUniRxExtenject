@@ -34,16 +34,15 @@ public class MiniMapPresenter : MonoBehaviour
     void Awake ()
     {
         _minimapview.OnClick ()
-            .ThrottleFirst (System.TimeSpan.FromSeconds (1f)) // 実行間隔の指定
+            .ThrottleFirst (System.TimeSpan.FromSeconds (0.5f)) // 実行間隔の指定
             .DoOnSubscribe (() =>
             {
                 MiniMapAction ();
             })
             .Subscribe (_ =>
             {
-                MiniMapAction (_miniMapModel.IsPickup);
                 _miniMapModel.IsPickup = !_miniMapModel.IsPickup;
-
+                MiniMapAction (_miniMapModel.IsPickup);
             });
     }
 

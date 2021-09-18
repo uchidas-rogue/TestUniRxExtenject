@@ -307,7 +307,7 @@ public class FieldService : IDisposable
         }
     }
 
-    public int[,,] MakeField (int widthLevel, int heightLevel, int floorNum)
+    public int[,,] MakeField (int floorNum)
     {
         if (CheckCanMakeRoom ())
         {
@@ -318,7 +318,7 @@ public class FieldService : IDisposable
             MakeRoom ();
         }
         int cnt = 0;
-        while (cnt < (widthLevel + heightLevel) * floorNum)
+        while (cnt < (floorNum * 2 + 30) * floorNum)
         {
             ChangeDir ();
             ChangeroomSize ();

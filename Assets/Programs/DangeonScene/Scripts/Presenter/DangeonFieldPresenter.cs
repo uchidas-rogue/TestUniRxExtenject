@@ -39,7 +39,7 @@ public class DangeonFieldPresenter : MonoBehaviour
                     using (var makeFieldSevice = new FieldService (FieldWidth, FieldHeith, 49, 49))
                     {
                         _dangeonFieldView.RemoveAllTiles ();
-                        _dangeonFieldModel.Field = makeFieldSevice.MakeField (num + 25, num + 25, num);
+                        _dangeonFieldModel.Field = makeFieldSevice.MakeField (num);
                     }
                     // 画面に設置する
                     SetField ();

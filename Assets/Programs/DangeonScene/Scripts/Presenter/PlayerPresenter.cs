@@ -9,15 +9,17 @@ using Zenject;
 public class PlayerPresenter : MonoBehaviour
 {
     #region injection
+    IMoveObjectServece _moveObjectSevice;
     IPlayerModel _playerModel;
     IDangeonFieldModel _dangeonFieldModel;
-
     IMiniMapStringService _miniMapStringSevice;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IPlayerModel injectpm, IDangeonFieldModel injectdfm, IMiniMapStringService injectmmss)
+    public void Constructor (IMoveObjectServece injectmos, IPlayerModel injectpm,
+        IDangeonFieldModel injectdfm, IMiniMapStringService injectmmss)
     {
+        _moveObjectSevice = injectmos;
         _playerModel = injectpm;
         _dangeonFieldModel = injectdfm;
         _miniMapStringSevice = injectmmss;
@@ -33,8 +35,7 @@ public class PlayerPresenter : MonoBehaviour
 
     void Awake ()
     {
-        _playerView.InitPosition ();
-        _playerModel.InitInputVec ();
+        PlayerInit ();
 
         // button onclick register
         foreach (var _moveBtn in _moveButtonView)
@@ -55,11 +56,7 @@ public class PlayerPresenter : MonoBehaviour
                 // })
                 .TakeUntil (_moveBtn.movebutton_OnUp ())
                 .RepeatUntilDestroy (_moveBtn.gameObject)
-                .Subscribe (_ =>
-                {
-                    //Debug.Log ("press!");
-                    _playerModel.ChangeVec3 (_moveBtn.vectorX, _moveBtn.vectorY);
-                });
+                .Subscribe (_ => SetPlayerInputVec (_moveBtn.vectorX, _moveBtn.vectorY));
         }
 
         // PlayerInputVec3RPの変更によって呼び出すように登録する
@@ -111,9 +108,7 @@ public class PlayerPresenter : MonoBehaviour
             {
                 // 移動を停止する ないとミニマップが誤動作する
                 _playerView.KillMoving ();
-                _playerView.InitPosition ();
-                _playerModel.InitInputVec ();
-
+                PlayerInit ();
                 // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
                 _dangeonFieldModel.FloorNumRP.Value++;
             });
@@ -149,11 +144,32 @@ public class PlayerPresenter : MonoBehaviour
     }
 
     /// <summary>
+    /// プレイヤーの移動入力と位置の初期化
+    /// </summary>
+    private void PlayerInit ()
+    {
+        _playerView.InitPosition ();
+        _playerModel.PlayerInputVec3RP.Value = Vector3.zero;
+    }
+
+    /// <summary>
+    /// プレイヤーの移動入力の設定
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    private void SetPlayerInputVec (float x, float y)
+    {
+        _playerModel.PlayerInputVec3RP.Value = Vector3.zero;
+        _playerModel.DirectionPlayerRP.Value = _moveObjectSevice.GetInputDirection (x, y);
+        _playerModel.PlayerInputVec3RP.Value = _moveObjectSevice.GetInputVec (x, y);
+    }
+
+    /// <summary>
     /// 歩いた場所かどうかをチェックする
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    public void CheckWalkedTile (int x, int y)
+    private void CheckWalkedTile (int x, int y)
     {
         if (_dangeonFieldModel.Field[x, y, 1] == 0)
         { // チェックしてないタイルなら
@@ -167,7 +183,7 @@ public class PlayerPresenter : MonoBehaviour
         }
     }
 
-    public void StartCheckWalkedTiles (int x, int y)
+    private void StartCheckWalkedTiles (int x, int y)
     {
         if (_dangeonFieldModel.Field[x, y, 0] == 2)
         { // player in floor
