@@ -12,12 +12,15 @@ public class PlayerPresenter : MonoBehaviour
     IPlayerModel _playerModel;
     IDangeonFieldModel _dangeonFieldModel;
 
+    IMiniMapStringService _miniMapStringSevice;
+
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IPlayerModel injectpm, IDangeonFieldModel injectdfm)
+    public void Constructor (IPlayerModel injectpm, IDangeonFieldModel injectdfm, IMiniMapStringService injectmmss)
     {
         _playerModel = injectpm;
         _dangeonFieldModel = injectdfm;
+        _miniMapStringSevice = injectmmss;
     }
     #endregion
 
@@ -44,14 +47,14 @@ public class PlayerPresenter : MonoBehaviour
             //     });
 
             _moveBtn.movebutton_OnDown ()
-                .SelectMany (_ => _moveBtn.UpdateAsObservable ())
+                .SelectMany (_moveBtn.UpdateAsObservable ())
                 .Where (_ => !_playerView.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting)
-                .TakeUntil (_moveBtn.movebutton_OnUp ())
                 // .DoOnCompleted (() =>
                 // {
                 //     Debug.Log ("released!");
                 // })
-                .RepeatUntilDestroy (_moveBtn)
+                .TakeUntil (_moveBtn.movebutton_OnUp ())
+                .RepeatUntilDestroy (_moveBtn.gameObject)
                 .Subscribe (_ =>
                 {
                     //Debug.Log ("press!");
@@ -64,6 +67,7 @@ public class PlayerPresenter : MonoBehaviour
             .Subscribe (
                 dvec3 => { _playerView.Move (dvec3); }
             );
+
         // 移動時のキャラ絵の変更
         _playerModel.DirectionPlayerRP
             .Subscribe (
@@ -72,7 +76,7 @@ public class PlayerPresenter : MonoBehaviour
 
         // playerの位置が変わった時の処理
         _playerModel.PlayerPositionVec3RP
-            .Where (pos => pos != Vector3.zero) // 最初の一回無視する
+            .Where (ppos => ppos != Vector3.zero && !_dangeonFieldModel.IsFieldSetting)
             .Subscribe (
                 ppos =>
                 {
@@ -81,20 +85,23 @@ public class PlayerPresenter : MonoBehaviour
                     //     //todo
                     //     _playerview.CreateFovFloor (ppos);
                     // }
+
                     StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
-                    _miniMapView.SetMiniMapText (MakeMiniMapString ((int) ppos.x, (int) ppos.y));
+                    _miniMapView.SetMiniMapText (
+                        _miniMapStringSevice.MakeMiniMapString (
+                            (int) ppos.x, (int) ppos.y, _dangeonFieldModel.Field
+                        ));
                 }
             );
 
         // player postion get
         var tmpvec3 = new Vector3 ();
         _playerView.UpdateAsObservable ()
-            .Subscribe (
-                _ =>
-                {
-                    tmpvec3.Set (Mathf.Ceil (_playerView.transform.position.x), Mathf.Ceil (_playerView.transform.position.y), 0);
-                    _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
-                });
+            .Subscribe (_ =>
+            {
+                tmpvec3.Set (Mathf.Ceil (_playerView.transform.position.x), Mathf.Ceil (_playerView.transform.position.y), 0);
+                _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
+            });
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
         _playerView.OnTriggerEnter2DAsObservable ()
@@ -103,7 +110,7 @@ public class PlayerPresenter : MonoBehaviour
             .Subscribe (_ =>
             {
                 // 移動を停止する ないとミニマップが誤動作する
-                _playerView.KillMoving();
+                _playerView.KillMoving ();
                 _playerView.InitPosition ();
                 _playerModel.InitInputVec ();
 
@@ -186,71 +193,6 @@ public class PlayerPresenter : MonoBehaviour
             _dangeonFieldModel.Field[x + 1, y + 1, 1] = 1;
         }
 
-    }
-
-    private StringBuilder mapStringBuilder = new StringBuilder ();
-
-    public string MakeMiniMapString (int playerposx, int playerposy)
-    {
-        mapStringBuilder.Clear ();
-
-        for (int y = playerposy + 7; y >= playerposy - 7; y--)
-        {
-            for (int x = playerposx - 10; x <= playerposx + 10; x++)
-            {
-                ConvObjtoRichtext (playerposx, playerposy, x, y);
-            }
-            mapStringBuilder.AppendLine ("");
-        }
-        return mapStringBuilder.ToString ();
-    }
-
-    /// <summary>
-    /// それぞれのオブジェクトをリッチテキストに置き換える
-    /// </summary>
-    /// <param name="playerposx"></param>
-    /// <param name="playerposy"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    public void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y)
-    {
-        if (x == playerposx && y == playerposy)
-        { //player position
-            mapStringBuilder.Append ("<color=yellow>●</color>");
-        }
-        else if (_dangeonFieldModel.Field[x, y, 0] == 3)
-        { //exit position
-            if (_dangeonFieldModel.Field[x, y, 1] == 1)
-            {
-                mapStringBuilder.Append ("<color=green>■</color>");
-            }
-            else
-            {
-                mapStringBuilder.Append ("   ");
-            }
-        }
-        else if (_dangeonFieldModel.Field[x, y, 0] == 1 || _dangeonFieldModel.Field[x, y, 0] == 2)
-        { //floor position
-            if (_dangeonFieldModel.Field[x, y, 1] == 1)
-            {
-                mapStringBuilder.Append ("<color=blue>■</color>");
-            }
-            else
-            {
-                mapStringBuilder.Append ("   ");
-            }
-        }
-        else
-        { //wall position
-            if (_dangeonFieldModel.Field[x, y, 1] == 1)
-            {
-                mapStringBuilder.Append ("■");
-            }
-            else
-            {
-                mapStringBuilder.Append ("   ");
-            }
-        }
     }
 
 }

@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MakeFieldService
+public class FieldService : IDisposable
 {
-    public MakeFieldService (int fieldWidth, int fieldHeight, int playerX, int playerY)
+    public FieldService (int fieldWidth, int fieldHeight, int digX, int digY)
     {
         _width = fieldWidth;
         _height = fieldHeight;
-        _x = playerX;
-        _y = playerY;
+        _x = digX;
+        _y = digY;
         Field = new int[fieldWidth, fieldHeight, 2];
     }
 
-    public int[, , ] Field { get; private set; } 
+    public void Dispose (){}
+
+    public int[, , ] Field { get; private set; } = null;
 
     #region privateParam
     private int _width;
@@ -303,6 +305,42 @@ public class MakeFieldService
             int randomListNum = Random.Range (0, _stairsSuggestList.Count);
             Field[_stairsSuggestList[randomListNum][0], _stairsSuggestList[randomListNum][1], 0] = ((int) FieldClass.exit);
         }
+    }
+
+    public int[,,] MakeField (int widthLevel, int heightLevel, int floorNum)
+    {
+        if (CheckCanMakeRoom ())
+        {
+            while (!CheckCanMakeRoomDirection ())
+            {
+                ChangeDir ();
+            }
+            MakeRoom ();
+        }
+        int cnt = 0;
+        while (cnt < (widthLevel + heightLevel) * floorNum)
+        {
+            ChangeDir ();
+            ChangeroomSize ();
+            ChangeroomEntry ();
+
+            if (CheckCanMakeRoomDirection ())
+            {
+                MakeRoom ();
+            }
+            else if (CheckCanDigDirection ())
+            {
+                MakePath ();
+            }
+            else
+            {
+                ChangePosition ();
+            }
+            cnt++;
+        }
+        MakeStairs ();
+        
+        return Field;
     }
 
     #endregion Method

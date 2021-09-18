@@ -29,16 +29,21 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     void Awake ()
     {
-         _dangeonFieldModel.FloorNumRP
+        _dangeonFieldModel.FloorNumRP
+            .DoOnSubscribe (SetFieldSize)
             .Subscribe (
                 num =>
                 {
                     _dangeonFieldModel.IsFieldSetting = true;
 
-                    SetFieldSize ();
-                    _dangeonFieldView.RemoveAllTiles ();
-                    _dangeonFieldModel.MakeField (FieldWidth, FieldHeith, num);
+                    using (var makeFieldSevice = new FieldService (FieldWidth, FieldHeith, 49, 49))
+                    {
+                        _dangeonFieldView.RemoveAllTiles ();
+                        _dangeonFieldModel.Field = makeFieldSevice.MakeField (num + 25, num + 25, num);
+                    }
+                    // 画面に設置する
                     SetField ();
+                    // テスト用　ミニマップを全部表示
                     //StartCheckWalkedTilesTest(49,49);
 
                     _dangeonFieldModel.IsFieldSetting = false;

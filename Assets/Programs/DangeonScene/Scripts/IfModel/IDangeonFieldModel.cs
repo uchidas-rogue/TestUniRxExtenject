@@ -12,6 +12,4 @@ public interface IDangeonFieldModel
     /// </summary>
     /// <value></value>
     int[, , ] Field { get; set; }
-
-    void MakeField (int width, int height, int level);
 }
