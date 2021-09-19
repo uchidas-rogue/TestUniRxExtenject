@@ -10,7 +10,7 @@ using Zenject;
 public class DangeonFieldPresenter : MonoBehaviour
 {
     #region injection
-    private IDangeonFieldModel _dangeonFieldModel;
+    IDangeonFieldModel _dangeonFieldModel;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
@@ -18,19 +18,25 @@ public class DangeonFieldPresenter : MonoBehaviour
     {
         _dangeonFieldModel = injectdfm;
     }
-    #endregion
+    #endregion // injection
 
-    [SerializeField]
-    public DangeonFieldVeiw DangeonFieldView;
+    #region views
+    DangeonFieldVeiw _dangeonFieldView;
+    ChangeFloorCanvasView _changeFloorCanvasView;
+
+    void Awake ()
+    {
+        _dangeonFieldView = GetComponent<DangeonFieldVeiw> ();
+        _changeFloorCanvasView = FindObjectOfType<ChangeFloorCanvasView> ();
+    }
+    #endregion // views
 
     [SerializeField]
     public int FieldWidth;
     [SerializeField]
     public int FieldHeith;
-    [SerializeField]
-    public ChangeFloorCanvasView ChangeFloorCanvasView;
 
-    void Awake ()
+    void Start ()
     {
         _dangeonFieldModel.FloorNumRP
             .DoOnSubscribe (SetFieldSize)
@@ -79,15 +85,15 @@ public class DangeonFieldPresenter : MonoBehaviour
     }
     #endregion
 
-    private async void InitField (int num)
+    async void InitField (int num)
     {
         _dangeonFieldModel.IsFieldSetting = true;
         // 画面に設置済みのタイルを全て消す
-        DangeonFieldView.RemoveAllTiles ();
+        _dangeonFieldView.RemoveAllTiles ();
 
         // floornum appear
-        ChangeFloorCanvasView.SetActiveAll(true);
-        ChangeFloorCanvasView.SetFloorNumText ($"FloorNum:{num}");
+        _changeFloorCanvasView.SetActiveAll (true);
+        _changeFloorCanvasView.SetFloorNumText ($"FloorNum:{num}");
 
         using (var makeFieldSevice = new FieldService (FieldWidth, FieldHeith, 49, 49))
         {
@@ -101,7 +107,7 @@ public class DangeonFieldPresenter : MonoBehaviour
         await UniTask.Delay (1000);
 
         // floornum disappear
-        ChangeFloorCanvasView.SetActiveAll(false);
+        _changeFloorCanvasView.SetActiveAll (false);
         _dangeonFieldModel.IsFieldSetting = false;
     }
 
@@ -124,16 +130,16 @@ public class DangeonFieldPresenter : MonoBehaviour
                 switch (_dangeonFieldModel.Field[x, y, 0])
                 {
                     case (int) FieldClass.wall:
-                        DangeonFieldView.SetTile (DangeonFieldView.WallTiles[(int) Wall.wallreaf], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.wallreaf], x, y);
                         break;
                     case (int) FieldClass.path:
-                        DangeonFieldView.SetTile (DangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
                         break;
                     case (int) FieldClass.floor:
-                        DangeonFieldView.SetTile (DangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
                         break;
                     case (int) FieldClass.exit:
-                        DangeonFieldView.SetTile (DangeonFieldView.StairsTile, x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.StairsTile, x, y);
                         break;
                     default:
                         break;

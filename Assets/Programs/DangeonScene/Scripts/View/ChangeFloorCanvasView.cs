@@ -7,15 +7,37 @@ using UnityEngine.EventSystems;
 public class ChangeFloorCanvasView : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI FloorNumtextGUI;
-    public void SetFloorNumText (string floorNumString) => FloorNumtextGUI.text = floorNumString;
+    GameObject FloorNumText;
+    [SerializeField]
+    GameObject BlackBack;
+
+    TextMeshProUGUI _floorNumText;
+
+    void Awake ()
+    {
+        Instantiate (
+            FloorNumText,
+            new Vector3 (0, 0, 0),
+            Quaternion.identity,
+            transform);
+
+        Instantiate (
+            BlackBack,
+            new Vector3 (0, 0, 0),
+            Quaternion.identity,
+            transform);
+
+        _floorNumText = GetComponentInChildren<TextMeshProUGUI> ();
+    }
+
+    public void SetFloorNumText (string floorNumString) => _floorNumText.text = floorNumString;
 
     public void SetActiveAll (bool isActive)
     {
         // Remove all child object 
         foreach (Transform item in transform)
         {
-            item.gameObject.SetActive(isActive);
+            item.gameObject.SetActive (isActive);
         }
     }
 }

@@ -26,14 +26,21 @@ public class MiniMapPresenter : MonoBehaviour
         _playerModel = injectpm;
     }
 
-    #endregion
+    #endregion // injection
 
-    [SerializeField]
-    MiniMapView MiniMapView;
+    #region views
+    MiniMapView _miniMapView;
 
     void Awake ()
     {
-        MiniMapView.OnClick ()
+        _miniMapView = GetComponent<MiniMapView> ();
+    }
+
+    #endregion // views
+
+    void Start ()
+    {
+        _miniMapView.OnClick ()
             .ThrottleFirst (System.TimeSpan.FromSeconds (0.5f)) // 実行間隔の指定
             .DoOnSubscribe (() =>
             {
@@ -50,10 +57,10 @@ public class MiniMapPresenter : MonoBehaviour
     /// MiniMapがクリックされた時の処理
     /// </summary>
     /// <param name="isPickup"></param>
-    private void MiniMapAction (bool isPickup = false)
+    void MiniMapAction (bool isPickup = false)
     {
 
-        MiniMapView.SetMiniMapText (
+        _miniMapView.SetMiniMapText (
             _miniMapStringService.MakeMiniMapString (
                 (int) _playerModel.PlayerPositionVec3RP.Value.x,
                 (int) _playerModel.PlayerPositionVec3RP.Value.y,
@@ -63,13 +70,13 @@ public class MiniMapPresenter : MonoBehaviour
 
         if (isPickup)
         {
-            MiniMapView.ChangeMapSize (
+            _miniMapView.ChangeMapSize (
                 _miniMapModel.PickedMapPositionVec3, _miniMapModel.PiciedMapSizeVec2
             );
         }
         else
         {
-            MiniMapView.ChangeMapSize (
+            _miniMapView.ChangeMapSize (
                 _miniMapModel.MiniMapPositionVec3, _miniMapModel.MiniMapSizeVec2, false
             );
         }

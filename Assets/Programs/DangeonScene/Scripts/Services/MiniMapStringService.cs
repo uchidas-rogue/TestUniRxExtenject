@@ -15,22 +15,9 @@ public class MiniMapStringService : IMiniMapStringService
         _mapStringBuilder = new StringBuilder ();
     }
 
-    private int _cntX;
-    private int _cntY;
-
-    private StringBuilder _mapStringBuilder;
-
-    /// <summary>
-    /// 指定の位置がFieldの内側かどうか
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    private bool CheckInsidePosition (int x, int y, int[, , ] field)
-    {
-        return (x > -1 && x < field.GetLength (0)) &&
-            (y > -1 && y < field.GetLength (1));
-    }
+    int _cntX;
+    int _cntY;
+    StringBuilder _mapStringBuilder;
 
     public string MakeMiniMapString (int playerposx, int playerposy, int[, , ] field, bool isPickup = false)
     {
@@ -65,13 +52,25 @@ public class MiniMapStringService : IMiniMapStringService
     }
 
     /// <summary>
+    /// 指定の位置がFieldの内側かどうか
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    bool CheckInsidePosition (int x, int y, int[, , ] field)
+    {
+        return (x > -1 && x < field.GetLength (0)) &&
+            (y > -1 && y < field.GetLength (1));
+    }
+
+    /// <summary>
     /// それぞれのオブジェクトをリッチテキストに置き換える
     /// </summary>
     /// <param name="playerposx"></param>
     /// <param name="playerposy"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y, int[, , ] field)
+    void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y, int[, , ] field)
     {
         if (!CheckInsidePosition (_cntX, _cntY, field)) { return; }
 

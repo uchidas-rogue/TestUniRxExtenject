@@ -5,8 +5,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 public class MoveButtonView : MonoBehaviour
 {
-    [SerializeField]
-    private ObservableEventTrigger EventTrigger;
     /// <summary>
     /// 移動方向を示す数値 水平方向
     /// </summary>
@@ -18,7 +16,14 @@ public class MoveButtonView : MonoBehaviour
     [SerializeField]
     public float VectorY;
 
-    public IObservable<PointerEventData> movebutton_OnDown () => EventTrigger.OnPointerDownAsObservable ();
-    public IObservable<PointerEventData> movebutton_OnUp () => EventTrigger.OnPointerUpAsObservable ();
+    ObservableEventTrigger _eventTrigger;
+
+    void Awake()
+    {
+        _eventTrigger = GetComponent<ObservableEventTrigger>();
+    }
+
+    public IObservable<PointerEventData> movebutton_OnDown () => _eventTrigger.OnPointerDownAsObservable ();
+    public IObservable<PointerEventData> movebutton_OnUp () => _eventTrigger.OnPointerUpAsObservable ();
 
 }

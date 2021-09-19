@@ -24,21 +24,27 @@ public class PlayerPresenter : MonoBehaviour
         _dangeonFieldModel = injectdfm;
         _miniMapStringSevice = injectmmss;
     }
-    #endregion
+    #endregion // injection
 
-    [SerializeField]
-    PlayerView PlayerView;
-    [SerializeField]
-    MiniMapView MiniMapView;
-    [SerializeField]
-    MoveButtonView[] MoveButtonView;
+    #region views
+    PlayerView _playerView;
+    MiniMapView _miniMapView;
+    MoveButtonView[] _moveButtonView;
 
     void Awake ()
+    {
+        _playerView = GetComponent<PlayerView> ();
+        _miniMapView = FindObjectOfType<MiniMapView> ();
+        _moveButtonView = FindObjectsOfType<MoveButtonView> ();
+    }
+    #endregion // views
+
+    void Start ()
     {
         PlayerInit ();
 
         // button onclick register
-        foreach (var _moveBtn in MoveButtonView)
+        foreach (var _moveBtn in _moveButtonView)
         {
             // _moveBtn.movebutton_OnUp ()
             //     .Where (_ => !_playerview.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting.Value)
@@ -49,7 +55,7 @@ public class PlayerPresenter : MonoBehaviour
 
             _moveBtn.movebutton_OnDown ()
                 .SelectMany (_moveBtn.UpdateAsObservable ())
-                .Where (_ => !PlayerView.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting)
+                .Where (_ => !_playerView.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting)
                 // .DoOnCompleted (() =>
                 // {
                 //     Debug.Log ("released!");
@@ -62,18 +68,18 @@ public class PlayerPresenter : MonoBehaviour
         // PlayerInputVec3RPの変更によって呼び出すように登録する
         _playerModel.PlayerInputVec3RP
             .Subscribe (
-                dvec3 => { PlayerView.Move (dvec3); }
+                dvec3 => { _playerView.Move (dvec3); }
             );
 
         // 移動時のキャラ絵の変更
         _playerModel.DirectionPlayerRP
             .Subscribe (
-                dir => PlayerView.ChangeSprite (dir)
+                dir => _playerView.ChangeSprite (dir)
             );
 
         // playerの位置が変わった時の処理
         _playerModel.PlayerPositionVec3RP
-            .Where (ppos => ppos != Vector3.zero )//&& !_dangeonFieldModel.IsFieldSettingRP.Value)
+            .Where (ppos => ppos != Vector3.zero) //&& !_dangeonFieldModel.IsFieldSettingRP.Value)
             .Subscribe (
                 ppos =>
                 {
@@ -84,7 +90,7 @@ public class PlayerPresenter : MonoBehaviour
                     // }
 
                     StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
-                    MiniMapView.SetMiniMapText (
+                    _miniMapView.SetMiniMapText (
                         _miniMapStringSevice.MakeMiniMapString (
                             (int) ppos.x, (int) ppos.y, _dangeonFieldModel.Field
                         ));
@@ -93,21 +99,21 @@ public class PlayerPresenter : MonoBehaviour
 
         // player postion get
         var tmpvec3 = new Vector3 ();
-        PlayerView.UpdateAsObservable ()
+        _playerView.UpdateAsObservable ()
             .Subscribe (_ =>
             {
                 tmpvec3.Set (
-                    Mathf.Ceil (PlayerView.TransformCash.position.x),
-                    Mathf.Ceil (PlayerView.TransformCash.position.y),
+                    Mathf.Ceil (_playerView.GetPlayerPosition ().x),
+                    Mathf.Ceil (_playerView.GetPlayerPosition ().y),
                     0
                 );
                 _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
             });
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
-        PlayerView.OnTriggerStay2DAsObservable ()
+        _playerView.OnTriggerStay2DAsObservable ()
             .Select (collision => collision.tag)
-            .Where (_ => !PlayerView.IsObjectMoving)
+            .Where (_ => !_playerView.IsObjectMoving)
             .Subscribe (tag =>
             {
                 switch (tag)
@@ -154,9 +160,9 @@ public class PlayerPresenter : MonoBehaviour
     /// <summary>
     /// プレイヤーの移動入力と位置の初期化
     /// </summary>
-    private void PlayerInit ()
+    void PlayerInit ()
     {
-        PlayerView.InitPosition ();
+        _playerView.InitPosition ();
         _playerModel.PlayerInputVec3RP.Value = Vector3.zero;
     }
 
@@ -165,7 +171,7 @@ public class PlayerPresenter : MonoBehaviour
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void SetPlayerInputVec (float x, float y)
+    void SetPlayerInputVec (float x, float y)
     {
         _playerModel.PlayerInputVec3RP.Value = Vector3.zero;
         _playerModel.DirectionPlayerRP.Value = _moveObjectSevice.GetInputDirection (x, y);
@@ -177,7 +183,7 @@ public class PlayerPresenter : MonoBehaviour
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void CheckWalkedTile (int x, int y)
+    void CheckWalkedTile (int x, int y)
     {
         if (_dangeonFieldModel.Field[x, y, 1] == 0)
         { // チェックしてないタイルなら
@@ -191,7 +197,7 @@ public class PlayerPresenter : MonoBehaviour
         }
     }
 
-    private void StartCheckWalkedTiles (int x, int y)
+    void StartCheckWalkedTiles (int x, int y)
     {
         if (_dangeonFieldModel.Field[x, y, 0] == 2)
         { // player in floor

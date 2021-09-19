@@ -10,7 +10,7 @@ public interface IMoveObjectServece
 
 public class MoveObjectServece : IMoveObjectServece
 {
-    private Vector3 _vector3 = new Vector3 ();
+    Vector3 _vector3 = new Vector3 ();
 
     public Vector3 GetInputVec (float x, float y)
     {

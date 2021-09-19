@@ -19,9 +19,15 @@ public class #SCRIPTNAME# : MonoBehaviour
     #endregion
 
     #region viewscript
-    #endregion
+    
 
     void Awake ()
+    {
+        #NOTRIM#
+    }
+    #endregion
+
+    void Start ()
     {
         #NOTRIM#
     }

@@ -15,24 +15,23 @@ public class FieldService : IDisposable
 
     public void Dispose () { }
 
-    public int[, , ] Field { get; private set; } = null;
+    #region Params
+    int[, , ] Field { get; set; } = null;
+    int _width;
+    int _height;
+    Direction _direction = Direction.right;
+    int _x;
+    int _y;
+    int _roomWidth;
+    int _roomHeiht;
+    int _roomEntryX;
+    int _roomEntryY;
+    int _roomNumber;
+    List<int[]> _floorPosList = new List<int[]> ();
+    List<int[]> _stairsSuggestList = new List<int[]> ();
+    Random _random = new Random ();
 
-    #region privateParam
-    private int _width;
-    private int _height;
-    private Direction _direction = Direction.right;
-    private int _x;
-    private int _y;
-    private int _roomWidth;
-    private int _roomHeiht;
-    private int _roomEntryX;
-    private int _roomEntryY;
-    private int _roomNumber;
-    private List<int[]> _floorPosList = new List<int[]> ();
-    private List<int[]> _stairsSuggestList = new List<int[]> ();
-    private Random _random = new Random ();
-
-    #endregion privateParam
+    #endregion // Params
 
     #region Method
 
@@ -42,7 +41,7 @@ public class FieldService : IDisposable
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    private bool CheckInside0Position (int x, int y)
+    bool CheckInside0Position (int x, int y)
     {
         return (x > -1 && x < this._width) &&
             (y > -1 && y < this._height) &&
@@ -55,7 +54,7 @@ public class FieldService : IDisposable
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    private bool CheckCanDig (int x, int y)
+    bool CheckCanDig (int x, int y)
     {
         return (CheckInside0Position (x, y + 2 * (int) Direction.up) ||
             CheckInside0Position (x, y + 2 * (int) Direction.down) ||
@@ -135,7 +134,7 @@ public class FieldService : IDisposable
     /// <summary>
     /// 壁以外になってる場所を確認する
     /// </summary>
-    private void CheckFloorPosition ()
+    void CheckFloorPosition ()
     {
         _floorPosList.Clear ();
         for (int i = 0; i < (this._width - 1) / 2; i++)
@@ -150,7 +149,7 @@ public class FieldService : IDisposable
         }
     }
 
-    private void CheckStairsSuggestPosition ()
+    void CheckStairsSuggestPosition ()
     {
         CheckFloorPosition ();
         _stairsSuggestList.Clear ();
@@ -349,5 +348,5 @@ public class FieldService : IDisposable
         return await UniTask.Run (() => MakeField (floorNum));
     }
 
-    #endregion Method
+    #endregion // Method
 }
