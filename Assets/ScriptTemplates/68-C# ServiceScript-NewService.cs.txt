@@ -1,0 +1,12 @@
+using System;
+using UnityEngine;
+
+public interface I#SCRIPTNAME#
+{
+    
+}
+
+public class #SCRIPTNAME# : I#SCRIPTNAME#
+{
+    
+}

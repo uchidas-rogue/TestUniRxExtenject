@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface IMiniMapStringService
 {
-    string MakeMiniMapString (int playerposx, int playerposy,int[,,] field, bool isPickup = false);
+    string MakeMiniMapString (int playerposx, int playerposy, int[, , ] field, bool isPickup = false);
 }
 
 public class MiniMapStringService : IMiniMapStringService
@@ -20,9 +20,21 @@ public class MiniMapStringService : IMiniMapStringService
 
     private StringBuilder _mapStringBuilder;
 
-    public string MakeMiniMapString (int playerposx, int playerposy, int[,,] field, bool isPickup = false)
+    /// <summary>
+    /// 指定の位置がFieldの内側かどうか
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    private bool CheckInsidePosition (int x, int y, int[, , ] field)
     {
-        if (field == null){ return ""; }
+        return (x > -1 && x < field.GetLength (0)) &&
+            (y > -1 && y < field.GetLength (1));
+    }
+
+    public string MakeMiniMapString (int playerposx, int playerposy, int[, , ] field, bool isPickup = false)
+    {
+        if (field == null) { return ""; }
 
         _mapStringBuilder.Clear ();
 
@@ -59,8 +71,10 @@ public class MiniMapStringService : IMiniMapStringService
     /// <param name="playerposy"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    private void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y, int[,,] field)
+    private void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y, int[, , ] field)
     {
+        if (!CheckInsidePosition (_cntX, _cntY, field)) { return; }
+
         if (x == playerposx && y == playerposy)
         { //player position
             _mapStringBuilder.Append ("<color=yellow>●</color>");

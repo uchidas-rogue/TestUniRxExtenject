@@ -29,11 +29,11 @@ public class MiniMapPresenter : MonoBehaviour
     #endregion
 
     [SerializeField]
-    MiniMapView _minimapview;
+    MiniMapView MiniMapView;
 
     void Awake ()
     {
-        _minimapview.OnClick ()
+        MiniMapView.OnClick ()
             .ThrottleFirst (System.TimeSpan.FromSeconds (0.5f)) // 実行間隔の指定
             .DoOnSubscribe (() =>
             {
@@ -53,7 +53,7 @@ public class MiniMapPresenter : MonoBehaviour
     private void MiniMapAction (bool isPickup = false)
     {
 
-        _minimapview.SetMiniMapText (
+        MiniMapView.SetMiniMapText (
             _miniMapStringService.MakeMiniMapString (
                 (int) _playerModel.PlayerPositionVec3RP.Value.x,
                 (int) _playerModel.PlayerPositionVec3RP.Value.y,
@@ -63,13 +63,13 @@ public class MiniMapPresenter : MonoBehaviour
 
         if (isPickup)
         {
-            _minimapview.ChangeMapSize (
+            MiniMapView.ChangeMapSize (
                 _miniMapModel.PickedMapPositionVec3, _miniMapModel.PiciedMapSizeVec2
             );
         }
         else
         {
-            _minimapview.ChangeMapSize (
+            MiniMapView.ChangeMapSize (
                 _miniMapModel.MiniMapPositionVec3, _miniMapModel.MiniMapSizeVec2, false
             );
         }

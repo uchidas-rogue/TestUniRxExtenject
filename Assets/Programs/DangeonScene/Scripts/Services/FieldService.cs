@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
+using Cysharp.Threading.Tasks;
 
 public class FieldService : IDisposable
 {
@@ -14,7 +13,7 @@ public class FieldService : IDisposable
         Field = new int[fieldWidth, fieldHeight, 2];
     }
 
-    public void Dispose (){}
+    public void Dispose () { }
 
     public int[, , ] Field { get; private set; } = null;
 
@@ -31,6 +30,7 @@ public class FieldService : IDisposable
     private int _roomNumber;
     private List<int[]> _floorPosList = new List<int[]> ();
     private List<int[]> _stairsSuggestList = new List<int[]> ();
+    private Random _random = new Random ();
 
     #endregion privateParam
 
@@ -59,8 +59,8 @@ public class FieldService : IDisposable
     {
         return (CheckInside0Position (x, y + 2 * (int) Direction.up) ||
             CheckInside0Position (x, y + 2 * (int) Direction.down) ||
-            CheckInside0Position (x + 2 * (int) Direction.left / Mathf.Abs ((int) Direction.left), y) ||
-            CheckInside0Position (x + 2 * (int) Direction.right / Mathf.Abs ((int) Direction.right), y)
+            CheckInside0Position (x + 2 * (int) Direction.left / Math.Abs ((int) Direction.left), y) ||
+            CheckInside0Position (x + 2 * (int) Direction.right / Math.Abs ((int) Direction.right), y)
         );
     }
 
@@ -72,11 +72,11 @@ public class FieldService : IDisposable
     {
         if (_direction == Direction.up || _direction == Direction.down)
         {
-            return CheckInside0Position (_x, _y + 2 * ((int) _direction / Mathf.Abs ((int) _direction)));
+            return CheckInside0Position (_x, _y + 2 * ((int) _direction / Math.Abs ((int) _direction)));
         }
         else //(direction == Direction.left || direction == Direction.right)
         {
-            return CheckInside0Position (_x + 2 * ((int) _direction / Mathf.Abs ((int) _direction)), _y);
+            return CheckInside0Position (_x + 2 * ((int) _direction / Math.Abs ((int) _direction)), _y);
         }
     }
 
@@ -98,13 +98,13 @@ public class FieldService : IDisposable
             ) ||
             (CheckInside0Position (_x, _y - _roomEntryY) &&
                 CheckInside0Position (_x, _y - _roomEntryY + _roomHeiht - 1) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.left / Mathf.Abs ((int) Direction.left), _y - _roomEntryY) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.left / Mathf.Abs ((int) Direction.left), _y - _roomEntryY + _roomHeiht - 1)
+                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.left / Math.Abs ((int) Direction.left), _y - _roomEntryY) &&
+                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.left / Math.Abs ((int) Direction.left), _y - _roomEntryY + _roomHeiht - 1)
             ) ||
             (CheckInside0Position (_x, _y - _roomEntryY) &&
                 CheckInside0Position (_x, _y - _roomEntryY + _roomHeiht - 1) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.right / Mathf.Abs ((int) Direction.right), _y - _roomEntryY) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.right / Mathf.Abs ((int) Direction.right), _y - _roomEntryY + _roomHeiht - 1)
+                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.right / Math.Abs ((int) Direction.right), _y - _roomEntryY) &&
+                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.right / Math.Abs ((int) Direction.right), _y - _roomEntryY + _roomHeiht - 1)
             );
     }
 
@@ -126,14 +126,14 @@ public class FieldService : IDisposable
         {
             return (CheckInside0Position (_x, _y - _roomEntryY) &&
                 CheckInside0Position (_x, _y - _roomEntryY + _roomHeiht - 1) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Mathf.Abs ((int) _direction)), _y - _roomEntryY) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Mathf.Abs ((int) _direction)), _y - _roomEntryY + _roomHeiht - 1)
+                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY) &&
+                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY + _roomHeiht - 1)
             );
         }
     }
 
     /// <summary>
-    /// 部屋になってる場所を確認する
+    /// 壁以外になってる場所を確認する
     /// </summary>
     private void CheckFloorPosition ()
     {
@@ -184,7 +184,7 @@ public class FieldService : IDisposable
     /// </summary>
     public void ChangeDir ()
     {
-        switch (Random.Range (0, 4))
+        switch (_random.Next (4))
         {
             case 0:
                 this._direction = Direction.up;
@@ -207,7 +207,7 @@ public class FieldService : IDisposable
     public void ChangePosition ()
     {
         CheckFloorPosition ();
-        int randomListNum = Random.Range (0, _floorPosList.Count);
+        int randomListNum = _random.Next (_floorPosList.Count);
         if (_floorPosList.Count != 0)
         {
             _x = _floorPosList[randomListNum][0];
@@ -220,12 +220,12 @@ public class FieldService : IDisposable
     /// </summary>
     public void ChangeroomSize ()
     {
-        _roomWidth = Random.Range (4, 8);
+        _roomWidth = _random.Next (4, 8);
         if (_roomWidth % 2 == 0)
         { //odd num
             _roomWidth++;
         }
-        _roomHeiht = Random.Range (4, 8);
+        _roomHeiht = _random.Next (4, 8);
         if (_roomHeiht % 2 == 0)
         { //odd num
             _roomHeiht++;
@@ -237,12 +237,12 @@ public class FieldService : IDisposable
     /// </summary>
     public void ChangeroomEntry ()
     {
-        _roomEntryX = Random.Range (0, _roomWidth + 1);
+        _roomEntryX = _random.Next (_roomWidth + 1);
         if (_roomEntryX % 2 == 1)
         { //even num
             _roomEntryX--;
         }
-        _roomEntryY = Random.Range (0, _roomHeiht + 1);
+        _roomEntryY = _random.Next (_roomHeiht + 1);
         if (_roomEntryY % 2 == 1)
         { //even num
             _roomEntryY--;
@@ -272,7 +272,7 @@ public class FieldService : IDisposable
                 {
                     //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
                     //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
-                    Field[_x + i * ((int) _direction / Mathf.Abs ((int) _direction)), _y - _roomEntryY + j, 0] = (int) FieldClass.floor;
+                    Field[_x + i * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY + j, 0] = (int) FieldClass.floor;
                 }
             }
             _roomNumber++;
@@ -290,9 +290,9 @@ public class FieldService : IDisposable
         }
         else // if (direction == Direction.left || direction == Direction.right)
         {
-            _x += ((int) _direction / Mathf.Abs ((int) _direction));
+            _x += ((int) _direction / Math.Abs ((int) _direction));
             Field[_x, _y, 0] = ((int) FieldClass.path);
-            _x += ((int) _direction / Mathf.Abs ((int) _direction));
+            _x += ((int) _direction / Math.Abs ((int) _direction));
             Field[_x, _y, 0] = ((int) FieldClass.path);
         }
     }
@@ -302,13 +302,14 @@ public class FieldService : IDisposable
         CheckStairsSuggestPosition ();
         if (_stairsSuggestList.Count != 0)
         {
-            int randomListNum = Random.Range (0, _stairsSuggestList.Count);
+            int randomListNum = _random.Next (_stairsSuggestList.Count);
             Field[_stairsSuggestList[randomListNum][0], _stairsSuggestList[randomListNum][1], 0] = ((int) FieldClass.exit);
         }
     }
 
-    public int[,,] MakeField (int floorNum)
+    public int[, , ] MakeField (int floorNum)
     {
+        // 最初の一部屋を作る
         if (CheckCanMakeRoom ())
         {
             while (!CheckCanMakeRoomDirection ())
@@ -339,8 +340,13 @@ public class FieldService : IDisposable
             cnt++;
         }
         MakeStairs ();
-        
+
         return Field;
+    }
+
+    public async UniTask<int[, , ]> MakeFieldAsync (int floorNum)
+    {
+        return await UniTask.Run (() => MakeField (floorNum));
     }
 
     #endregion Method

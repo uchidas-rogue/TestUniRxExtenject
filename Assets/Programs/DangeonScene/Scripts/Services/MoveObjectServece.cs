@@ -10,15 +10,15 @@ public interface IMoveObjectServece
 
 public class MoveObjectServece : IMoveObjectServece
 {
-    private Vector3 vector3 = new Vector3 ();
+    private Vector3 _vector3 = new Vector3 ();
 
     public Vector3 GetInputVec (float x, float y)
     {
         if (x != 0) x = x > 0f ? 1f : -1f;
         if (y != 0) y = y > 0f ? 1f : -1f;
 
-        vector3.Set (x, y, 0f);
-        return vector3;
+        _vector3.Set (x, y, 0f);
+        return _vector3;
     }
 
     public Direction GetInputDirection (float x, float y)

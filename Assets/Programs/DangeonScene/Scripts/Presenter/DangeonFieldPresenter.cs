@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -20,35 +21,20 @@ public class DangeonFieldPresenter : MonoBehaviour
     #endregion
 
     [SerializeField]
-    public DangeonFieldVeiw _dangeonFieldView;
+    public DangeonFieldVeiw DangeonFieldView;
 
     [SerializeField]
     public int FieldWidth;
     [SerializeField]
     public int FieldHeith;
+    [SerializeField]
+    public ChangeFloorCanvasView ChangeFloorCanvasView;
 
     void Awake ()
     {
         _dangeonFieldModel.FloorNumRP
             .DoOnSubscribe (SetFieldSize)
-            .Subscribe (
-                num =>
-                {
-                    _dangeonFieldModel.IsFieldSetting = true;
-
-                    using (var makeFieldSevice = new FieldService (FieldWidth, FieldHeith, 49, 49))
-                    {
-                        _dangeonFieldView.RemoveAllTiles ();
-                        _dangeonFieldModel.Field = makeFieldSevice.MakeField (num);
-                    }
-                    // 画面に設置する
-                    SetField ();
-                    // テスト用　ミニマップを全部表示
-                    //StartCheckWalkedTilesTest(49,49);
-
-                    _dangeonFieldModel.IsFieldSetting = false;
-                }
-            );
+            .Subscribe (num => InitField (num));
 
         // Observable.Timer (System.TimeSpan.FromSeconds (2), System.TimeSpan.FromSeconds (4))
         //     .Subscribe (_ =>
@@ -93,6 +79,32 @@ public class DangeonFieldPresenter : MonoBehaviour
     }
     #endregion
 
+    private async void InitField (int num)
+    {
+        _dangeonFieldModel.IsFieldSetting = true;
+        // 画面に設置済みのタイルを全て消す
+        DangeonFieldView.RemoveAllTiles ();
+
+        // floornum appear
+        ChangeFloorCanvasView.SetActiveAll(true);
+        ChangeFloorCanvasView.SetFloorNumText ($"FloorNum:{num}");
+
+        using (var makeFieldSevice = new FieldService (FieldWidth, FieldHeith, 49, 49))
+        {
+            _dangeonFieldModel.Field = await makeFieldSevice.MakeFieldAsync (num);
+        }
+        // 画面に設置する
+        SetField ();
+        // テスト用 ミニマップを全部表示
+        //StartCheckWalkedTilesTest (49, 49);
+
+        await UniTask.Delay (1000);
+
+        // floornum disappear
+        ChangeFloorCanvasView.SetActiveAll(false);
+        _dangeonFieldModel.IsFieldSetting = false;
+    }
+
     public void SetFieldSize ()
     {
         // NG size under 101
@@ -112,16 +124,16 @@ public class DangeonFieldPresenter : MonoBehaviour
                 switch (_dangeonFieldModel.Field[x, y, 0])
                 {
                     case (int) FieldClass.wall:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.wallTiles[(int) Wall.wallreaf], x, y);
+                        DangeonFieldView.SetTile (DangeonFieldView.WallTiles[(int) Wall.wallreaf], x, y);
                         break;
                     case (int) FieldClass.path:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.floorTiles[(int) Floor.rocktile], x, y);
+                        DangeonFieldView.SetTile (DangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
                         break;
                     case (int) FieldClass.floor:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.floorTiles[(int) Floor.rocktile], x, y);
+                        DangeonFieldView.SetTile (DangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
                         break;
                     case (int) FieldClass.exit:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.stairsTile, x, y);
+                        DangeonFieldView.SetTile (DangeonFieldView.StairsTile, x, y);
                         break;
                     default:
                         break;

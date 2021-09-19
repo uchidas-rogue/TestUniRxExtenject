@@ -4,12 +4,12 @@ public class DangeonFieldVeiw : MonoBehaviour
 {
     //floor prefab 
     [SerializeField]
-    public GameObject[] floorTiles;
+    public GameObject[] FloorTiles;
     //wall prefab
     [SerializeField]
-    public GameObject[] wallTiles;
+    public GameObject[] WallTiles;
     [SerializeField]
-    public GameObject stairsTile;
+    public GameObject StairsTile;
     public void SetTile (GameObject tile, int x, int y)
     {
         // Clone the Tiles

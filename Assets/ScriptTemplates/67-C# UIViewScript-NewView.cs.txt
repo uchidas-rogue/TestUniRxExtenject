@@ -6,8 +6,8 @@ using UniRx.Triggers;
 public class #SCRIPTNAME# : MonoBehaviour
 {
     [SerializeField]
-    private ObservableEventTrigger eventTrigger;
+    private ObservableEventTrigger EventTrigger;
 
-    # click event
-    public IObservable<PointerEventData> OnClick()=>eventTrigger.OnPointerClickAsObservable();
+    // click event
+    public IObservable<PointerEventData> OnClick()=>EventTrigger.OnPointerClickAsObservable();
 }

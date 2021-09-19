@@ -10,16 +10,15 @@ public class MovingObjectBase : MonoBehaviour
         [SerializeField]
         private float MoveTime = 0.2f;
         [SerializeField]
-        private BoxCollider2D boxCollider;
+        private BoxCollider2D BoxCollider;
         [SerializeField]
-        private Rigidbody2D rb2d;
+        private Rigidbody2D Rb2d;
         [SerializeField]
-        protected Transform transformCash;
-        private Vector2 tmpVec2 = new Vector2 (0, 0);
+        public Transform TransformCash;
 
         public void KillMoving ()
         {
-            transformCash.DOKill();
+            TransformCash.DOKill();
         }
 
         /// <summary>
@@ -28,11 +27,11 @@ public class MovingObjectBase : MonoBehaviour
         /// <param name="inpVec3"></param>
         private void ActualMove (Vector3 inpVec3)
         {
-            var endvec3 = (transformCash.position + inpVec3);
+            var endvec3 = (TransformCash.position + inpVec3);
             if (endvec3 != Vector3.zero)
             {
                 IsObjectMoving = true;
-                transformCash
+                TransformCash
                     .DOMove (endvec3, MoveTime)
                     .OnComplete (() => IsObjectMoving = false);
             }
@@ -45,11 +44,11 @@ public class MovingObjectBase : MonoBehaviour
         public void AttemptMove (Vector3 inpVec3)
         {
             RaycastHit2D hit;
-            boxCollider.enabled = false;
+            BoxCollider.enabled = false;
 
             hit = Physics2D.Linecast (
-                (Vector2) transformCash.position,
-                ((Vector2) transformCash.position + (Vector2) inpVec3),
+                (Vector2) TransformCash.position,
+                ((Vector2) TransformCash.position + (Vector2) inpVec3),
                 BlockingLayer);
 
             // 斜めの壁抜け防止
@@ -73,7 +72,7 @@ public class MovingObjectBase : MonoBehaviour
             //     }
             // }
 
-            boxCollider.enabled = true;
+            BoxCollider.enabled = true;
 
             if (hit.transform == null)
             {

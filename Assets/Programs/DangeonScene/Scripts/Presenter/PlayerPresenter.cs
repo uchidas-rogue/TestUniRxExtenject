@@ -27,18 +27,18 @@ public class PlayerPresenter : MonoBehaviour
     #endregion
 
     [SerializeField]
-    PlayerView _playerView;
+    PlayerView PlayerView;
     [SerializeField]
-    MiniMapView _miniMapView;
+    MiniMapView MiniMapView;
     [SerializeField]
-    MoveButtonView[] _moveButtonView;
+    MoveButtonView[] MoveButtonView;
 
     void Awake ()
     {
         PlayerInit ();
 
         // button onclick register
-        foreach (var _moveBtn in _moveButtonView)
+        foreach (var _moveBtn in MoveButtonView)
         {
             // _moveBtn.movebutton_OnUp ()
             //     .Where (_ => !_playerview.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting.Value)
@@ -49,31 +49,31 @@ public class PlayerPresenter : MonoBehaviour
 
             _moveBtn.movebutton_OnDown ()
                 .SelectMany (_moveBtn.UpdateAsObservable ())
-                .Where (_ => !_playerView.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting)
+                .Where (_ => !PlayerView.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting)
                 // .DoOnCompleted (() =>
                 // {
                 //     Debug.Log ("released!");
                 // })
                 .TakeUntil (_moveBtn.movebutton_OnUp ())
                 .RepeatUntilDestroy (_moveBtn.gameObject)
-                .Subscribe (_ => SetPlayerInputVec (_moveBtn.vectorX, _moveBtn.vectorY));
+                .Subscribe (_ => SetPlayerInputVec (_moveBtn.VectorX, _moveBtn.VectorY));
         }
 
         // PlayerInputVec3RPの変更によって呼び出すように登録する
         _playerModel.PlayerInputVec3RP
             .Subscribe (
-                dvec3 => { _playerView.Move (dvec3); }
+                dvec3 => { PlayerView.Move (dvec3); }
             );
 
         // 移動時のキャラ絵の変更
         _playerModel.DirectionPlayerRP
             .Subscribe (
-                dir => _playerView.ChangeSprite (dir)
+                dir => PlayerView.ChangeSprite (dir)
             );
 
         // playerの位置が変わった時の処理
         _playerModel.PlayerPositionVec3RP
-            .Where (ppos => ppos != Vector3.zero && !_dangeonFieldModel.IsFieldSetting)
+            .Where (ppos => ppos != Vector3.zero )//&& !_dangeonFieldModel.IsFieldSettingRP.Value)
             .Subscribe (
                 ppos =>
                 {
@@ -84,7 +84,7 @@ public class PlayerPresenter : MonoBehaviour
                     // }
 
                     StartCheckWalkedTiles ((int) ppos.x, (int) ppos.y);
-                    _miniMapView.SetMiniMapText (
+                    MiniMapView.SetMiniMapText (
                         _miniMapStringSevice.MakeMiniMapString (
                             (int) ppos.x, (int) ppos.y, _dangeonFieldModel.Field
                         ));
@@ -93,25 +93,33 @@ public class PlayerPresenter : MonoBehaviour
 
         // player postion get
         var tmpvec3 = new Vector3 ();
-        _playerView.UpdateAsObservable ()
+        PlayerView.UpdateAsObservable ()
             .Subscribe (_ =>
             {
-                tmpvec3.Set (Mathf.Ceil (_playerView.transform.position.x), Mathf.Ceil (_playerView.transform.position.y), 0);
+                tmpvec3.Set (
+                    Mathf.Ceil (PlayerView.TransformCash.position.x),
+                    Mathf.Ceil (PlayerView.TransformCash.position.y),
+                    0
+                );
                 _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
             });
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
-        _playerView.OnTriggerEnter2DAsObservable ()
+        PlayerView.OnTriggerStay2DAsObservable ()
             .Select (collision => collision.tag)
-            .Where (tag => tag == "Stairs")
-            .Subscribe (_ =>
+            .Where (_ => !PlayerView.IsObjectMoving)
+            .Subscribe (tag =>
             {
-                // 移動を停止する ないとミニマップが誤動作する
-                _playerView.KillMoving ();
-                PlayerInit ();
-                // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
-                _dangeonFieldModel.FloorNumRP.Value++;
+                switch (tag)
+                {
+                    case "Stairs":
+                        PlayerInit ();
+                        _dangeonFieldModel.FloorNumRP.Value++;
+                        break;
+                }
             });
+        // reload scene
+        // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
 
         // unirxでのupdateみたいなやつ => everyupdate
         // keyboard up down left right 監視する
@@ -148,7 +156,7 @@ public class PlayerPresenter : MonoBehaviour
     /// </summary>
     private void PlayerInit ()
     {
-        _playerView.InitPosition ();
+        PlayerView.InitPosition ();
         _playerModel.PlayerInputVec3RP.Value = Vector3.zero;
     }
 
