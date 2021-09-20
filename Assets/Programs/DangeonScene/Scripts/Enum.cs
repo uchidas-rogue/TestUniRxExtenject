@@ -20,7 +20,11 @@ public enum FieldClass
     wall,
     path,
     floor,
-    exit
+    exit,
+    roomwallup,
+    roomwallright,
+    roomwalldown,
+    roomwallleft
 }
 
 public enum Floor
@@ -30,13 +34,13 @@ public enum Floor
 
 public enum Wall
 {
-    wallreaf,
-    wallup,
-    wallupright,
-    wallright,
-    walldownright,
-    walldown,
-    walldownleft,
-    wallleft,
-    wallupleft
+    reaf,
+    roomup,
+    roomupright,
+    roomright,
+    roomdownright,
+    roomdown,
+    roomdownleft,
+    roomleft,
+    roomupleft
 }

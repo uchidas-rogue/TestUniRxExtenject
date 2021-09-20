@@ -67,7 +67,7 @@ public class FieldService : IDisposable
     /// 掘り進める方向に掘り進めるか
     /// </summary>
     /// <returns></returns>
-    public bool CheckCanDigDirection ()
+    bool CheckCanDigDirection ()
     {
         if (_direction == Direction.up || _direction == Direction.down)
         {
@@ -83,7 +83,7 @@ public class FieldService : IDisposable
     /// 上下左右いづれかに部屋が作成できるか
     /// </summary>
     /// <returns></returns>
-    public bool CheckCanMakeRoom ()
+    bool CheckCanMakeRoom ()
     {
         return (CheckInside0Position (_x - _roomEntryX, _y) &&
                 CheckInside0Position (_x - _roomEntryX + _roomWidth - 1, _y) &&
@@ -111,22 +111,26 @@ public class FieldService : IDisposable
     /// 掘り進める方向に部屋が作成できるか
     /// </summary>
     /// <returns></returns>
-    public bool CheckCanMakeRoomDirection ()
+    bool CheckCanMakeRoomDirection ()
     {
         if (_direction == Direction.up || _direction == Direction.down)
         {
+            //(Field[x-entry,y]),(Field[x-entry,y+(size-1)])
+            //(Field[x-entry+size-1,y]),(Field[x-entry+size-1,y+(size-1)])
             return (CheckInside0Position (_x - _roomEntryX, _y) &&
-                CheckInside0Position (_x - _roomEntryX + _roomWidth - 1, _y) &&
+                CheckInside0Position (_x - _roomEntryX + (_roomWidth - 1), _y) &&
                 CheckInside0Position (_x - _roomEntryX, _y + (_roomHeiht - 1) * (int) _direction) &&
-                CheckInside0Position (_x - _roomEntryX + _roomWidth - 1, _y + (_roomHeiht - 1) * (int) _direction)
+                CheckInside0Position (_x - _roomEntryX + (_roomWidth - 1), _y + (_roomHeiht - 1) * (int) _direction)
             );
         }
         else //(direction == Direction.left || direction == Direction.right)
         {
+            //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
+            //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
             return (CheckInside0Position (_x, _y - _roomEntryY) &&
-                CheckInside0Position (_x, _y - _roomEntryY + _roomHeiht - 1) &&
+                CheckInside0Position (_x, _y - _roomEntryY + (_roomHeiht - 1)) &&
                 CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY + _roomHeiht - 1)
+                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY + (_roomHeiht - 1))
             );
         }
     }
@@ -141,7 +145,7 @@ public class FieldService : IDisposable
         {
             for (int j = 0; j < (this._height - 1) / 2; j++)
             {
-                if (Field[2 * i + 1, 2 * j + 1, 0] != 0)
+                if (Field[2 * i + 1, 2 * j + 1, 0] != (int) FieldClass.wall)
                 {
                     _floorPosList.Add (new int[2] { 2 * i + 1, 2 * j + 1 });
                 }
@@ -149,7 +153,7 @@ public class FieldService : IDisposable
         }
     }
 
-    void CheckStairsSuggestPosition ()
+    void CheckStairSuggestPosition ()
     {
         CheckFloorPosition ();
         _stairsSuggestList.Clear ();
@@ -163,7 +167,7 @@ public class FieldService : IDisposable
         }
     }
 
-    public bool CheckAnyDigPosition ()
+    bool CheckAnyDigPosition ()
     {
         for (int i = 0; i < (this._width - 1) / 2; i++)
         {
@@ -181,7 +185,7 @@ public class FieldService : IDisposable
     /// <summary>
     /// 掘り進める方向をランダムに変更する
     /// </summary>
-    public void ChangeDir ()
+    void ChangeDir ()
     {
         switch (_random.Next (4))
         {
@@ -203,7 +207,7 @@ public class FieldService : IDisposable
     /// <summary>
     /// 掘り進める始点位置をランダムに変更する
     /// </summary>
-    public void ChangePosition ()
+    void ChangePosition ()
     {
         CheckFloorPosition ();
         int randomListNum = _random.Next (_floorPosList.Count);
@@ -217,68 +221,86 @@ public class FieldService : IDisposable
     /// <summary>
     /// 部屋のサイズをランダムに変更する
     /// </summary>
-    public void ChangeroomSize ()
+    void ChangeroomSize ()
     {
         _roomWidth = _random.Next (4, 8);
-        if (_roomWidth % 2 == 0)
-        { //odd num
-            _roomWidth++;
-        }
+        if (_roomWidth % 2 == 0) { _roomWidth++; }
         _roomHeiht = _random.Next (4, 8);
-        if (_roomHeiht % 2 == 0)
-        { //odd num
-            _roomHeiht++;
-        }
+        if (_roomHeiht % 2 == 0) { _roomHeiht++; }
     }
 
     /// <summary>
     /// 部屋の出入り口の場所をランダムに変更する
     /// </summary>
-    public void ChangeroomEntry ()
+    void ChangeroomEntry ()
     {
         _roomEntryX = _random.Next (_roomWidth + 1);
-        if (_roomEntryX % 2 == 1)
-        { //even num
-            _roomEntryX--;
-        }
+        if (_roomEntryX % 2 == 1) { _roomEntryX--; }
         _roomEntryY = _random.Next (_roomHeiht + 1);
-        if (_roomEntryY % 2 == 1)
-        { //even num
-            _roomEntryY--;
+        if (_roomEntryY % 2 == 1) { _roomEntryY--; }
+    }
+
+    int jfirst = -1;
+    int jlast = -1;
+    int ifirst = -1;
+    int ilast = -1;
+
+    void MakeRoomSub (int xroomdigstat, int yroomdigstat, int dirx, int diry)
+    {
+
+        // jfirst = (int) FieldClass.roomwalldown;
+        // jlast = (int) FieldClass.roomwallup;
+        // ifirst = (int) FieldClass.roomwallleft;
+        // ilast = (int) FieldClass.roomwallright;
+
+        // if (_direction == Direction.down)
+        // {
+        //     jfirst = (int) FieldClass.roomwallup;
+        //     jlast = (int) FieldClass.roomwalldown;
+        // }
+        // if (_direction == Direction.left)
+        // {
+        //     ifirst = (int) FieldClass.roomwallright;
+        //     ilast = (int) FieldClass.roomwallleft;
+        // }
+
+        for (int i = 0; i < _roomWidth; i++)
+        {
+            for (int j = 0; j < _roomHeiht; j++)
+            {
+                Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = (int) FieldClass.floor;
+
+                // if (j == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = jfirst;
+                // if (j == _roomHeiht - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = jlast;
+                // if (i == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = ifirst;
+                // if (i == _roomWidth - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = ilast;
+            }
         }
     }
 
-    public void MakeRoom ()
+    void MakeRoom ()
     {
         if (_direction == Direction.up || _direction == Direction.down)
         {
-            for (int i = 0; i < _roomWidth; i++)
-            {
-                for (int j = 0; j < _roomHeiht; j++)
-                {
-                    //(Field[x-entry,y]),(Field[x-entry,y+(size-1)])
-                    //(Field[x-entry+size-1,y]),(Field[x-entry+size-1,y+(size-1)])
-                    Field[_x - _roomEntryX + i, _y + j * (int) _direction, 0] = (int) FieldClass.floor;
-                }
-            }
-            _roomNumber++;
+            //(Field[x-entry+0,y]),(Field[x-entry,y+(size-1)])
+            //(Field[x-entry+(size-1),y]),(Field[x-entry+(size-1),y+(size-1)])
+            MakeRoomSub (
+                _x - _roomEntryX, _y,
+                1, ((int) _direction / Math.Abs ((int) _direction))
+            );
         }
-        else //if (direction == Direction.left || direction == Direction.right)
+        else // if (direction == Direction.left || direction == Direction.right)
         {
-            for (int i = 0; i < _roomWidth; i++)
-            {
-                for (int j = 0; j < _roomHeiht; j++)
-                {
-                    //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
-                    //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
-                    Field[_x + i * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY + j, 0] = (int) FieldClass.floor;
-                }
-            }
-            _roomNumber++;
+            //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
+            //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
+            MakeRoomSub (
+                _x, _y - _roomEntryY,
+                ((int) _direction / Math.Abs ((int) _direction)), 1
+            );
         }
     }
 
-    public void MakePath ()
+    void MakePath ()
     {
         if (_direction == Direction.up || _direction == Direction.down)
         {
@@ -296,14 +318,21 @@ public class FieldService : IDisposable
         }
     }
 
-    public void MakeStairs ()
+    bool MakeStairs ()
     {
-        CheckStairsSuggestPosition ();
+        CheckStairSuggestPosition ();
         if (_stairsSuggestList.Count != 0)
         {
             int randomListNum = _random.Next (_stairsSuggestList.Count);
             Field[_stairsSuggestList[randomListNum][0], _stairsSuggestList[randomListNum][1], 0] = ((int) FieldClass.exit);
         }
+
+        return _stairsSuggestList.Count != 0;
+    }
+
+    public void SetItems ()
+    {
+        CheckFloorPosition ();
     }
 
     public int[, , ] MakeField (int floorNum)
@@ -338,7 +367,11 @@ public class FieldService : IDisposable
             }
             cnt++;
         }
-        MakeStairs ();
+
+        if (!MakeStairs ())
+        { // 階段無ければもう一回作り直す
+            MakeField (floorNum);
+        }
 
         return Field;
     }

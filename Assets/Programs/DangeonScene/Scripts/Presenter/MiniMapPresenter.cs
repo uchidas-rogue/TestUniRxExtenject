@@ -42,10 +42,7 @@ public class MiniMapPresenter : MonoBehaviour
     {
         _miniMapView.OnClick ()
             .ThrottleFirst (System.TimeSpan.FromSeconds (0.5f)) // 実行間隔の指定
-            .DoOnSubscribe (() =>
-            {
-                MiniMapAction ();
-            })
+            .DoOnSubscribe (() => MiniMapAction ())
             .Subscribe (_ =>
             {
                 _miniMapModel.IsPickup = !_miniMapModel.IsPickup;

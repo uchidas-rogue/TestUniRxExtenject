@@ -100,11 +100,12 @@ public class PlayerPresenter : MonoBehaviour
         // player postion get
         var tmpvec3 = new Vector3 ();
         _playerView.UpdateAsObservable ()
+            .Where(_ => !_playerView.IsObjectMoving)
             .Subscribe (_ =>
             {
                 tmpvec3.Set (
-                    Mathf.Ceil (_playerView.GetPlayerPosition ().x),
-                    Mathf.Ceil (_playerView.GetPlayerPosition ().y),
+                    _playerView.GetPlayerPosition ().x,
+                    _playerView.GetPlayerPosition ().y,
                     0
                 );
                 _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
