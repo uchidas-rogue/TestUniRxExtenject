@@ -9,15 +9,15 @@ public class MovingObjectBase : MonoBehaviour
     float MoveTime = 0.2f;
     protected Transform _transformCash;
     LayerMask _blockingLayer;
-    BoxCollider2D _boxCollider;
-    Rigidbody2D _rb2d;
+    BoxCollider _boxCollider;
+    Rigidbody _rigidbody;
 
     void Awake ()
     {
         _transformCash = GetComponent<Transform> ();
         _blockingLayer = LayerMask.GetMask ("Blocking");
-        _boxCollider = GetComponent<BoxCollider2D> ();
-        _rb2d = GetComponent<Rigidbody2D> ();
+        _boxCollider = GetComponent<BoxCollider> ();
+        _rigidbody = GetComponent<Rigidbody> ();
         _spriteRenderer = GetComponent<SpriteRenderer> ();
     }
 
@@ -48,12 +48,12 @@ public class MovingObjectBase : MonoBehaviour
     /// <param name="inpVec3"></param>
     public void AttemptMove (Vector3 inpVec3)
     {
-        RaycastHit2D hit;
+        bool ishit;
         _boxCollider.enabled = false;
 
-        hit = Physics2D.Linecast (
-            (Vector2) _transformCash.position,
-            ((Vector2) _transformCash.position + (Vector2) inpVec3),
+        ishit = Physics.Linecast (
+            _transformCash.position,
+            _transformCash.position + inpVec3,
             _blockingLayer);
 
         // 斜めの壁抜け防止
@@ -79,7 +79,7 @@ public class MovingObjectBase : MonoBehaviour
 
         _boxCollider.enabled = true;
 
-        if (hit.transform == null)
+        if (!ishit)
         {
             ActualMove (inpVec3);
         }

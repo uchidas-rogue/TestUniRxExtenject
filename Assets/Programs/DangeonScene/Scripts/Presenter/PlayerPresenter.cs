@@ -112,7 +112,7 @@ public class PlayerPresenter : MonoBehaviour
             });
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
-        _playerView.OnTriggerStay2DAsObservable ()
+        _playerView.OnTriggerStayAsObservable ()
             .Select (collision => collision.tag)
             .Where (_ => !_playerView.IsObjectMoving)
             .Subscribe (tag =>

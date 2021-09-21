@@ -10,7 +10,7 @@ public class FieldService : IDisposable
         _height = fieldHeight;
         _x = digX;
         _y = digY;
-        Field = new int[fieldWidth, fieldHeight, 2];
+        Field = new int[fieldWidth, fieldHeight, 3];
     }
 
     public void Dispose () { }
@@ -240,10 +240,10 @@ public class FieldService : IDisposable
         if (_roomEntryY % 2 == 1) { _roomEntryY--; }
     }
 
-    int jfirst = -1;
-    int jlast = -1;
-    int ifirst = -1;
-    int ilast = -1;
+    // int jfirst = -1;
+    // int jlast = -1;
+    // int ifirst = -1;
+    // int ilast = -1;
 
     void MakeRoomSub (int xroomdigstat, int yroomdigstat, int dirx, int diry)
     {
@@ -329,11 +329,7 @@ public class FieldService : IDisposable
 
         return _stairsSuggestList.Count != 0;
     }
-
-    public void SetItems ()
-    {
-        CheckFloorPosition ();
-    }
+    
 
     public int[, , ] MakeField (int floorNum)
     {
