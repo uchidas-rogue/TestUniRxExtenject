@@ -30,6 +30,9 @@
 * UniRx 
   * assetstore
   * https://assetstore.unity.com/packages/tools/integration/unirx-reactive-extensions-for-unity-17276
+* UniTask
+  * github UPM->"add package from git URL"
+  * https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 * Extenject
   * assetstore
   * https://assetstore.unity.com/packages/tools/utilities/extenject-dependency-injection-ioc-157735
@@ -39,6 +42,12 @@
 * CriWare
   * ADX2 LE 小規模向け無料版
   * https://game.criware.jp/products/adx2-le/#ledl
+* Haruko
+  * assetstore
+  * https://assetstore.unity.com/packages/3d/haruko-69164
+* #D Cartoon Box Map
+  * assetstore
+  * https://assetstore.unity.com/packages/3d/environments/dungeons/3d-cartoon-box-map-50743
 ## 作成方針
 * UniRx + Extenject を使ってMVPパターンで作成する
 ## Tips

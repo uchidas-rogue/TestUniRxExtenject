@@ -28,6 +28,12 @@
 /[Aa]ssets/Gizmos/
 /[Aa]ssets/Plugins/
 
+# Haruko
+/[Aa]ssets/Haruko
+
+# 3d cartoon box map
+/[Aa]ssets/3D Cartoon Box Map
+
 # image directory
 /[Aa]ssets/Design/Sprites
 
