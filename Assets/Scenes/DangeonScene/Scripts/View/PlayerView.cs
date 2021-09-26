@@ -4,14 +4,10 @@ using UnityEngine;
 public class PlayerView : MovingObjectBase
 {
     Vector3 _initPosVec3 = new Vector3 (49f, 0, 49f);
-    Vector3 _mainCameraOffset;
-    Transform _mainCamera;
 
     protected override void Awake ()
     {
         base.Awake ();
-        _mainCamera = Camera.main.transform;
-        _mainCameraOffset = _mainCamera.position;
     }
 
     public void InitPosition ()
@@ -20,11 +16,6 @@ public class PlayerView : MovingObjectBase
     }
 
     public void Move (Vector3 inputVec3) => base.AttemptMove (inputVec3);
-
-    public void MainCameraTrackMove()
-    {
-        _mainCamera.position = _mainCameraOffset + _transformCash.position;
-    }
 
     public Vector3 GetPlayerPosition () => base._transformCash.position;
 

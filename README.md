@@ -1,6 +1,7 @@
 # TestUniRxExtenject <!-- omit in toc --> 
 - [環境](#環境)
   - [vscode extention](#vscode-extention)
+  - [素材](#素材)
   - [unity plugins](#unity-plugins)
 - [作成方針](#作成方針)
 - [Tips](#tips)
@@ -24,6 +25,9 @@
 * Japanese Language Pack for VS Code
 * vscode-icons
 * zenkaku
+### 素材
+* icon
+  * https://game-icons.net/ (加工OK、クレジット必須)
 ### unity plugins
 * TMP
   * Fonts

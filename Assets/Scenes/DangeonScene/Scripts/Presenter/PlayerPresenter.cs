@@ -29,19 +29,29 @@ public class PlayerPresenter : MonoBehaviour
     #region views
     PlayerView _playerView;
     MiniMapView _miniMapView;
+    MainCameraView _mainCameraVeiw;
     MoveButtonView[] _moveButtonView;
+    MoveCameraButtonView _moveCameraButtonView;
 
     void Awake ()
     {
         _playerView = GetComponent<PlayerView> ();
         _miniMapView = FindObjectOfType<MiniMapView> ();
         _moveButtonView = FindObjectsOfType<MoveButtonView> ();
+        _mainCameraVeiw = FindObjectOfType<MainCameraView> ();
+        _moveCameraButtonView = FindObjectOfType<MoveCameraButtonView> ();
     }
     #endregion // views
 
     void Start ()
     {
         PlayerInit ();
+
+        _moveCameraButtonView.OnClick ()
+            .Subscribe (_ =>
+            {
+                _mainCameraVeiw.Rotation();
+            });
 
         // button onclick register
         foreach (var _moveBtn in _moveButtonView)
@@ -103,7 +113,7 @@ public class PlayerPresenter : MonoBehaviour
             //.Where(_ => !_playerView.IsObjectMoving)
             .Subscribe (_ =>
             {
-                _playerView.MainCameraTrackMove ();
+                _mainCameraVeiw.Move (_playerView.GetPlayerPosition ());
                 // 移動中はプレイヤー位置の設定を行わない
                 if (_playerView.IsObjectMoving) { return; }
 

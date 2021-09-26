@@ -135,7 +135,7 @@ public class DangeonFieldPresenter : MonoBehaviour
                 switch (_dangeonFieldModel.Field[x, y, 0])
                 {
                     case (int) FieldClass.wall:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.reaf], x, y, 1);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.reaf], x, y, 0.8f);
                         break;
                     case (int) FieldClass.path:
                         _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
