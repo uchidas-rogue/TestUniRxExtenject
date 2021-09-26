@@ -50,7 +50,14 @@ public class PlayerPresenter : MonoBehaviour
         _moveCameraButtonView.OnClick ()
             .Subscribe (_ =>
             {
-                _mainCameraVeiw.Rotation();
+                if (_mainCameraVeiw.OffsetPosition == _mainCameraVeiw._offset1)
+                {
+                    _mainCameraVeiw.Rotation (_mainCameraVeiw._euler2, _mainCameraVeiw._offset2);
+                }
+                else
+                {
+                    _mainCameraVeiw.Rotation (_mainCameraVeiw._euler1, _mainCameraVeiw._offset1);
+                }
             });
 
         // button onclick register
@@ -93,7 +100,7 @@ public class PlayerPresenter : MonoBehaviour
             .Subscribe (
                 ppos =>
                 {
-                    // if (_dangeonFieldModel.Field[(int) ppos.x, (int) ppos.y, 0] == (int) FieldClass.floor)
+                    // if (_dangeonFieldModel.Field[(int) ppos.x, (int) ppos.y] == (int) FieldClass.floor)
                     // {
                     //     //todo
                     //     _playerview.CreateFovFloor (ppos);
@@ -102,7 +109,7 @@ public class PlayerPresenter : MonoBehaviour
                     StartCheckWalkedTiles ((int) ppos.x, (int) ppos.z);
                     _miniMapView.SetMiniMapText (
                         _miniMapStringSevice.MakeMiniMapString (
-                            (int) ppos.x, (int) ppos.z, _dangeonFieldModel.Field
+                            (int) ppos.x, (int) ppos.z
                         ));
                 }
             );
@@ -200,11 +207,11 @@ public class PlayerPresenter : MonoBehaviour
     /// <param name="y"></param>
     void CheckWalkedTile (int x, int y)
     {
-        if (_dangeonFieldModel.Field[x, y, 1] == 0)
+        if (_dangeonFieldModel.Map[x, y] != MapClass.walked)
         { // チェックしてないタイルなら
             // チェック済にする
-            _dangeonFieldModel.Field[x, y, 1] = 1;
-            if (_dangeonFieldModel.Field[x, y, 0] == 2)
+            _dangeonFieldModel.Map[x, y] = MapClass.walked;
+            if (_dangeonFieldModel.Field[x, y] == FieldClass.floor)
             { // まだフロア内なら
                 // さらに周りを調べに行く
                 StartCheckWalkedTiles (x, y);
@@ -214,7 +221,7 @@ public class PlayerPresenter : MonoBehaviour
 
     void StartCheckWalkedTiles (int x, int y)
     {
-        if (_dangeonFieldModel.Field[x, y, 0] == 2)
+        if (_dangeonFieldModel.Field[x, y] == FieldClass.floor)
         { // player in floor
             // 八方向全てチェックしに行く
             CheckWalkedTile (x - 1, y - 1);
@@ -228,14 +235,14 @@ public class PlayerPresenter : MonoBehaviour
         }
         else
         { // これないとフロアに入る前にフロアがマップにでる
-            _dangeonFieldModel.Field[x - 1, y - 1, 1] = 1;
-            _dangeonFieldModel.Field[x - 1, y, 1] = 1;
-            _dangeonFieldModel.Field[x - 1, y + 1, 1] = 1;
-            _dangeonFieldModel.Field[x, y - 1, 1] = 1;
-            _dangeonFieldModel.Field[x, y + 1, 1] = 1;
-            _dangeonFieldModel.Field[x + 1, y - 1, 1] = 1;
-            _dangeonFieldModel.Field[x + 1, y, 1] = 1;
-            _dangeonFieldModel.Field[x + 1, y + 1, 1] = 1;
+            _dangeonFieldModel.Map[x - 1, y - 1] = MapClass.walked;
+            _dangeonFieldModel.Map[x - 1, y] = MapClass.walked;
+            _dangeonFieldModel.Map[x - 1, y + 1] = MapClass.walked;
+            _dangeonFieldModel.Map[x, y - 1] = MapClass.walked;
+            _dangeonFieldModel.Map[x, y + 1] = MapClass.walked;
+            _dangeonFieldModel.Map[x + 1, y - 1] = MapClass.walked;
+            _dangeonFieldModel.Map[x + 1, y] = MapClass.walked;
+            _dangeonFieldModel.Map[x + 1, y + 1] = MapClass.walked;
         }
 
     }

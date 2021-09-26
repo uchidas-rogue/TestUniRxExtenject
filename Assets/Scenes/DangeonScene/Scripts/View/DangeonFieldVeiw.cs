@@ -10,6 +10,11 @@ public class DangeonFieldVeiw : MonoBehaviour
     public GameObject[] WallTiles;
     [SerializeField]
     public GameObject StairsTile;
+    [SerializeField]
+    public GameObject[] EventTiles;
+    
+    [SerializeField]
+    public GameObject[] Items;
 
     public void SetTile (GameObject tile, int x, int y, float z = 0)
     {

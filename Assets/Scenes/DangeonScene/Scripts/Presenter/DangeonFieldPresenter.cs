@@ -41,7 +41,7 @@ public class DangeonFieldPresenter : MonoBehaviour
     void Start ()
     {
         // Destoroy時にキャンセルされるtoken
-        cancelToken = this.GetCancellationTokenOnDestroy();
+        cancelToken = this.GetCancellationTokenOnDestroy ();
 
         _dangeonFieldModel.FloorNumRP
             .DoOnSubscribe (SetFieldSize)
@@ -64,11 +64,11 @@ public class DangeonFieldPresenter : MonoBehaviour
     /// <param name="y"></param>
     public void CheckWalkedTileTest (int x, int y)
     {
-        if (_dangeonFieldModel.Field[x, y, 1] == 0)
+        if (_dangeonFieldModel.Map[x, y] != MapClass.walked)
         { // チェックしてないタイルなら
             // チェック済にする
-            _dangeonFieldModel.Field[x, y, 1] = 1;
-            if (_dangeonFieldModel.Field[x, y, 0] != 0)
+            _dangeonFieldModel.Map[x, y] = MapClass.walked;
+            if (_dangeonFieldModel.Field[x, y] != FieldClass.wall)
             { // 壁以外なら
                 // さらに周りを調べに行く
                 StartCheckWalkedTilesTest (x, y);
@@ -102,6 +102,7 @@ public class DangeonFieldPresenter : MonoBehaviour
 
         using (var makeFieldSevice = new FieldService (FieldWidth, FieldHeith, 49, 49))
         {
+            _dangeonFieldModel.Map = new MapClass[FieldWidth, FieldHeith];
             _dangeonFieldModel.Field = await makeFieldSevice.MakeFieldAsync (num, cancelToken);
         }
         // 画面に設置する
@@ -132,31 +133,19 @@ public class DangeonFieldPresenter : MonoBehaviour
         {
             for (int y = 0; y < _dangeonFieldModel.Field.GetLength (1); y++)
             {
-                switch (_dangeonFieldModel.Field[x, y, 0])
+                switch (_dangeonFieldModel.Field[x, y])
                 {
-                    case (int) FieldClass.wall:
+                    case FieldClass.wall:
                         _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.reaf], x, y, 0.8f);
                         break;
-                    case (int) FieldClass.path:
+                    case FieldClass.path:
                         _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
                         break;
-                    case (int) FieldClass.floor:
+                    case FieldClass.floor:
                         _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
                         break;
-                    case (int) FieldClass.exit:
+                    case FieldClass.exit:
                         _dangeonFieldView.SetTile (_dangeonFieldView.StairsTile, x, y);
-                        break;
-                    case (int) FieldClass.roomwallup:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.roomup], x, y);
-                        break;
-                    case (int) FieldClass.roomwallright:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.roomright], x, y);
-                        break;
-                    case (int) FieldClass.roomwalldown:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.roomdown], x, y);
-                        break;
-                    case (int) FieldClass.roomwallleft:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.roomleft], x, y);
                         break;
                     default:
                         _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);

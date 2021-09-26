@@ -2,15 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using Zenject;
 
 public interface IMiniMapStringService
 {
-    string MakeMiniMapString (int playerposx, int playerposy, int[, , ] field, bool isPickup = false);
+    string MakeMiniMapString (int playerposx, int playerposy, bool isPickup = false);
 }
 
 public class MiniMapStringService : IMiniMapStringService
 {
-    public MiniMapStringService ()
+    [Inject]
+    IDangeonFieldModel _dangeonFieldModel;
+
+    public MiniMapStringService (IDangeonFieldModel dfm)
     {
         _mapStringBuilder = new StringBuilder ();
     }
@@ -19,19 +23,19 @@ public class MiniMapStringService : IMiniMapStringService
     int _cntY;
     StringBuilder _mapStringBuilder;
 
-    public string MakeMiniMapString (int playerposx, int playerposy, int[, , ] field, bool isPickup = false)
+    public string MakeMiniMapString (int playerposx, int playerposy, bool isPickup = false)
     {
-        if (field == null) { return ""; }
+        if (_dangeonFieldModel.Field == null) { return ""; }
 
         _mapStringBuilder.Clear ();
 
         if (isPickup)
         {
-            for (_cntY = field.GetLength (0) - 1; _cntY >= 0; _cntY--)
+            for (_cntY = _dangeonFieldModel.Field.GetLength (0) - 1; _cntY >= 0; _cntY--)
             {
-                for (_cntX = 0; _cntX < field.GetLength (1); _cntX++)
+                for (_cntX = 0; _cntX < _dangeonFieldModel.Field.GetLength (1); _cntX++)
                 {
-                    ConvObjtoRichtext (playerposx, playerposy, _cntX, _cntY, field);
+                    ConvObjtoRichtext (playerposx, playerposy, _cntX, _cntY);
                 }
                 _mapStringBuilder.AppendLine ("");
             }
@@ -42,7 +46,7 @@ public class MiniMapStringService : IMiniMapStringService
             {
                 for (_cntX = playerposx - 10; _cntX <= playerposx + 10; _cntX++)
                 {
-                    ConvObjtoRichtext (playerposx, playerposy, _cntX, _cntY, field);
+                    ConvObjtoRichtext (playerposx, playerposy, _cntX, _cntY);
                 }
                 _mapStringBuilder.AppendLine ("");
             }
@@ -57,10 +61,10 @@ public class MiniMapStringService : IMiniMapStringService
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    bool CheckInsidePosition (int x, int y, int[, , ] field)
+    bool CheckInsidePosition (int x, int y)
     {
-        return (x > -1 && x < field.GetLength (0)) &&
-            (y > -1 && y < field.GetLength (1));
+        return (x > -1 && x < _dangeonFieldModel.Field.GetLength (0)) &&
+            (y > -1 && y < _dangeonFieldModel.Field.GetLength (1));
     }
 
     /// <summary>
@@ -70,17 +74,17 @@ public class MiniMapStringService : IMiniMapStringService
     /// <param name="playerposy"></param>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y, int[, , ] field)
+    void ConvObjtoRichtext (int playerposx, int playerposy, int x, int y)
     {
-        if (!CheckInsidePosition (_cntX, _cntY, field)) { return; }
+        if (!CheckInsidePosition (_cntX, _cntY)) { return; }
 
         if (x == playerposx && y == playerposy)
         { //player position
             _mapStringBuilder.Append ("<color=yellow>●</color>");
         }
-        else if (field[x, y, 0] == 3)
+        else if (_dangeonFieldModel.Field[x, y] == FieldClass.exit)
         { //exit position
-            if (field[x, y, 1] == 1)
+            if (_dangeonFieldModel.Map[x, y] == MapClass.walked)
             {
                 _mapStringBuilder.Append ("<color=green>■</color>");
             }
@@ -89,9 +93,10 @@ public class MiniMapStringService : IMiniMapStringService
                 _mapStringBuilder.Append ("   ");
             }
         }
-        else if (field[x, y, 0] == 1 || field[x, y, 0] == 2)
+        else if (_dangeonFieldModel.Field[x, y] == FieldClass.path ||
+            _dangeonFieldModel.Field[x, y] == FieldClass.floor)
         { //floor position
-            if (field[x, y, 1] == 1)
+            if (_dangeonFieldModel.Map[x, y] == MapClass.walked)
             {
                 _mapStringBuilder.Append ("<color=blue>■</color>");
             }
@@ -102,7 +107,7 @@ public class MiniMapStringService : IMiniMapStringService
         }
         else
         { //wall position
-            if (field[x, y, 1] == 1)
+            if (_dangeonFieldModel.Map[x, y] == MapClass.walked)
             {
                 _mapStringBuilder.Append ("■");
             }

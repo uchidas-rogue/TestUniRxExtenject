@@ -61,7 +61,6 @@ public class MiniMapPresenter : MonoBehaviour
             _miniMapStringService.MakeMiniMapString (
                 (int) _playerModel.PlayerPositionVec3RP.Value.x,
                 (int) _playerModel.PlayerPositionVec3RP.Value.z,
-                _dangeonFieldModel.Field,
                 isPickup
             ));
 

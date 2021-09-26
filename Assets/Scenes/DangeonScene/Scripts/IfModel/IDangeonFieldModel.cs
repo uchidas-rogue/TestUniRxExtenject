@@ -16,8 +16,13 @@ public interface IDangeonFieldModel
     /// <value></value>
     bool IsFieldSetting { get; set; }
     /// <summary>
-    /// x,y,z z=0=>field z=1=>map
+    /// フィールド
     /// </summary>
     /// <value></value>
-    int[, , ] Field { get; set; }
+    FieldClass[, ] Field { get; set; }
+    /// <summary>
+    /// ミニマップ
+    /// </summary>
+    /// <value></value>
+    MapClass[, ] Map { get; set; }
 }

@@ -11,13 +11,13 @@ public class FieldService : IDisposable
         _height = fieldHeight;
         _x = digX;
         _y = digY;
-        Field = new int[fieldWidth, fieldHeight, 3];
+        Field = new FieldClass[fieldWidth, fieldHeight];
     }
 
     public void Dispose () { }
 
     #region Params
-    int[, , ] Field { get; set; } = null;
+    FieldClass[, ] Field { get; set; } = null;
     int _width;
     int _height;
     Direction _direction = Direction.right;
@@ -42,11 +42,11 @@ public class FieldService : IDisposable
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    bool CheckInside0Position (int x, int y)
+    bool CheckInsideWallPosition (int x, int y)
     {
         return (x > -1 && x < this._width) &&
             (y > -1 && y < this._height) &&
-            (this.Field[x, y, 0] == 0);
+            (this.Field[x, y] == FieldClass.wall);
     }
 
     /// <summary>
@@ -57,10 +57,10 @@ public class FieldService : IDisposable
     /// <returns></returns>
     bool CheckCanDig (int x, int y)
     {
-        return (CheckInside0Position (x, y + 2 * (int) Direction.up) ||
-            CheckInside0Position (x, y + 2 * (int) Direction.down) ||
-            CheckInside0Position (x + 2 * (int) Direction.left / Math.Abs ((int) Direction.left), y) ||
-            CheckInside0Position (x + 2 * (int) Direction.right / Math.Abs ((int) Direction.right), y)
+        return (CheckInsideWallPosition (x, y + 2 * (int) Direction.up) ||
+            CheckInsideWallPosition (x, y + 2 * (int) Direction.down) ||
+            CheckInsideWallPosition (x + 2 * (int) Direction.left / Math.Abs ((int) Direction.left), y) ||
+            CheckInsideWallPosition (x + 2 * (int) Direction.right / Math.Abs ((int) Direction.right), y)
         );
     }
 
@@ -72,11 +72,11 @@ public class FieldService : IDisposable
     {
         if (_direction == Direction.up || _direction == Direction.down)
         {
-            return CheckInside0Position (_x, _y + 2 * ((int) _direction / Math.Abs ((int) _direction)));
+            return CheckInsideWallPosition (_x, _y + 2 * ((int) _direction / Math.Abs ((int) _direction)));
         }
         else //(direction == Direction.left || direction == Direction.right)
         {
-            return CheckInside0Position (_x + 2 * ((int) _direction / Math.Abs ((int) _direction)), _y);
+            return CheckInsideWallPosition (_x + 2 * ((int) _direction / Math.Abs ((int) _direction)), _y);
         }
     }
 
@@ -86,25 +86,25 @@ public class FieldService : IDisposable
     /// <returns></returns>
     bool CheckCanMakeRoom ()
     {
-        return (CheckInside0Position (_x - _roomEntryX, _y) &&
-                CheckInside0Position (_x - _roomEntryX + _roomWidth - 1, _y) &&
-                CheckInside0Position (_x - _roomEntryX, _y + (_roomHeiht - 1) * (int) Direction.up) &&
-                CheckInside0Position (_x - _roomEntryX + _roomWidth - 1, _y + (_roomHeiht - 1) * (int) Direction.up)
+        return (CheckInsideWallPosition (_x - _roomEntryX, _y) &&
+                CheckInsideWallPosition (_x - _roomEntryX + _roomWidth - 1, _y) &&
+                CheckInsideWallPosition (_x - _roomEntryX, _y + (_roomHeiht - 1) * (int) Direction.up) &&
+                CheckInsideWallPosition (_x - _roomEntryX + _roomWidth - 1, _y + (_roomHeiht - 1) * (int) Direction.up)
             ) ||
-            (CheckInside0Position (_x - _roomEntryX, _y) &&
-                CheckInside0Position (_x - _roomEntryX + _roomWidth - 1, _y) &&
-                CheckInside0Position (_x - _roomEntryX, _y + (_roomHeiht - 1) * (int) Direction.down) &&
-                CheckInside0Position (_x - _roomEntryX + _roomWidth - 1, _y + (_roomHeiht - 1) * (int) Direction.down)
+            (CheckInsideWallPosition (_x - _roomEntryX, _y) &&
+                CheckInsideWallPosition (_x - _roomEntryX + _roomWidth - 1, _y) &&
+                CheckInsideWallPosition (_x - _roomEntryX, _y + (_roomHeiht - 1) * (int) Direction.down) &&
+                CheckInsideWallPosition (_x - _roomEntryX + _roomWidth - 1, _y + (_roomHeiht - 1) * (int) Direction.down)
             ) ||
-            (CheckInside0Position (_x, _y - _roomEntryY) &&
-                CheckInside0Position (_x, _y - _roomEntryY + _roomHeiht - 1) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.left / Math.Abs ((int) Direction.left), _y - _roomEntryY) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.left / Math.Abs ((int) Direction.left), _y - _roomEntryY + _roomHeiht - 1)
+            (CheckInsideWallPosition (_x, _y - _roomEntryY) &&
+                CheckInsideWallPosition (_x, _y - _roomEntryY + _roomHeiht - 1) &&
+                CheckInsideWallPosition (_x + (_roomWidth - 1) * (int) Direction.left / Math.Abs ((int) Direction.left), _y - _roomEntryY) &&
+                CheckInsideWallPosition (_x + (_roomWidth - 1) * (int) Direction.left / Math.Abs ((int) Direction.left), _y - _roomEntryY + _roomHeiht - 1)
             ) ||
-            (CheckInside0Position (_x, _y - _roomEntryY) &&
-                CheckInside0Position (_x, _y - _roomEntryY + _roomHeiht - 1) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.right / Math.Abs ((int) Direction.right), _y - _roomEntryY) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * (int) Direction.right / Math.Abs ((int) Direction.right), _y - _roomEntryY + _roomHeiht - 1)
+            (CheckInsideWallPosition (_x, _y - _roomEntryY) &&
+                CheckInsideWallPosition (_x, _y - _roomEntryY + _roomHeiht - 1) &&
+                CheckInsideWallPosition (_x + (_roomWidth - 1) * (int) Direction.right / Math.Abs ((int) Direction.right), _y - _roomEntryY) &&
+                CheckInsideWallPosition (_x + (_roomWidth - 1) * (int) Direction.right / Math.Abs ((int) Direction.right), _y - _roomEntryY + _roomHeiht - 1)
             );
     }
 
@@ -118,20 +118,20 @@ public class FieldService : IDisposable
         {
             //(Field[x-entry,y]),(Field[x-entry,y+(size-1)])
             //(Field[x-entry+size-1,y]),(Field[x-entry+size-1,y+(size-1)])
-            return (CheckInside0Position (_x - _roomEntryX, _y) &&
-                CheckInside0Position (_x - _roomEntryX + (_roomWidth - 1), _y) &&
-                CheckInside0Position (_x - _roomEntryX, _y + (_roomHeiht - 1) * (int) _direction) &&
-                CheckInside0Position (_x - _roomEntryX + (_roomWidth - 1), _y + (_roomHeiht - 1) * (int) _direction)
+            return (CheckInsideWallPosition (_x - _roomEntryX, _y) &&
+                CheckInsideWallPosition (_x - _roomEntryX + (_roomWidth - 1), _y) &&
+                CheckInsideWallPosition (_x - _roomEntryX, _y + (_roomHeiht - 1) * (int) _direction) &&
+                CheckInsideWallPosition (_x - _roomEntryX + (_roomWidth - 1), _y + (_roomHeiht - 1) * (int) _direction)
             );
         }
         else //(direction == Direction.left || direction == Direction.right)
         {
             //(Field[x,y-entry]),(Field[x+(size-1),y-entry])
             //(Field[x,y-entry+size-1]),(Field[x+(size-1),y-entry+size-1])
-            return (CheckInside0Position (_x, _y - _roomEntryY) &&
-                CheckInside0Position (_x, _y - _roomEntryY + (_roomHeiht - 1)) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY) &&
-                CheckInside0Position (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY + (_roomHeiht - 1))
+            return (CheckInsideWallPosition (_x, _y - _roomEntryY) &&
+                CheckInsideWallPosition (_x, _y - _roomEntryY + (_roomHeiht - 1)) &&
+                CheckInsideWallPosition (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY) &&
+                CheckInsideWallPosition (_x + (_roomWidth - 1) * ((int) _direction / Math.Abs ((int) _direction)), _y - _roomEntryY + (_roomHeiht - 1))
             );
         }
     }
@@ -146,7 +146,7 @@ public class FieldService : IDisposable
         {
             for (int j = 0; j < (this._height - 1) / 2; j++)
             {
-                if (Field[2 * i + 1, 2 * j + 1, 0] != (int) FieldClass.wall)
+                if (Field[2 * i + 1, 2 * j + 1] != FieldClass.wall)
                 {
                     _floorPosList.Add (new int[2] { 2 * i + 1, 2 * j + 1 });
                 }
@@ -160,8 +160,11 @@ public class FieldService : IDisposable
         _stairsSuggestList.Clear ();
         foreach (var item in _floorPosList)
         {
-            if ((Field[item[0] + 1, item[1], 0] + Field[item[0] - 1, item[1], 0] +
-                    Field[item[0], item[1] + 1, 0] + Field[item[0], item[1] - 1, 0]) == 1)
+            if (((int) Field[item[0] + 1, item[1]] +
+                    (int) Field[item[0] - 1, item[1]] +
+                    (int) Field[item[0], item[1] + 1] +
+                    (int) Field[item[0], item[1] - 1]
+                ) == 1)
             {
                 _stairsSuggestList.Add (item);
             }
@@ -269,12 +272,12 @@ public class FieldService : IDisposable
         {
             for (int j = 0; j < _roomHeiht; j++)
             {
-                Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = (int) FieldClass.floor;
+                Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = FieldClass.floor;
 
-                // if (j == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = jfirst;
-                // if (j == _roomHeiht - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = jlast;
-                // if (i == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = ifirst;
-                // if (i == _roomWidth - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry), 0] = ilast;
+                // if (j == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = jfirst;
+                // if (j == _roomHeiht - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = jlast;
+                // if (i == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = ifirst;
+                // if (i == _roomWidth - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = ilast;
             }
         }
     }
@@ -306,16 +309,16 @@ public class FieldService : IDisposable
         if (_direction == Direction.up || _direction == Direction.down)
         {
             _y += (int) _direction;
-            Field[_x, _y, 0] = ((int) FieldClass.path);
+            Field[_x, _y] = (FieldClass.path);
             _y += (int) _direction;
-            Field[_x, _y, 0] = ((int) FieldClass.path);
+            Field[_x, _y] = (FieldClass.path);
         }
         else // if (direction == Direction.left || direction == Direction.right)
         {
             _x += ((int) _direction / Math.Abs ((int) _direction));
-            Field[_x, _y, 0] = ((int) FieldClass.path);
+            Field[_x, _y] = (FieldClass.path);
             _x += ((int) _direction / Math.Abs ((int) _direction));
-            Field[_x, _y, 0] = ((int) FieldClass.path);
+            Field[_x, _y] = (FieldClass.path);
         }
     }
 
@@ -325,13 +328,13 @@ public class FieldService : IDisposable
         if (_stairsSuggestList.Count != 0)
         {
             int randomListNum = _random.Next (_stairsSuggestList.Count);
-            Field[_stairsSuggestList[randomListNum][0], _stairsSuggestList[randomListNum][1], 0] = ((int) FieldClass.exit);
+            Field[_stairsSuggestList[randomListNum][0], _stairsSuggestList[randomListNum][1]] = (FieldClass.exit);
         }
 
         return _stairsSuggestList.Count != 0;
     }
 
-    public int[, , ] MakeField (int floorNum)
+    public FieldClass[, ] MakeField (int floorNum)
     {
         // 最初の一部屋を作る
         if (CheckCanMakeRoom ())
@@ -372,7 +375,7 @@ public class FieldService : IDisposable
         return Field;
     }
 
-    public async UniTask<int[, , ]> MakeFieldAsync (int floorNum, CancellationToken token)
+    public async UniTask<FieldClass[, ]> MakeFieldAsync (int floorNum, CancellationToken token)
     {
         return await UniTask.Run (() =>
         {

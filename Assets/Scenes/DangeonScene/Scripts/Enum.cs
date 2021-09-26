@@ -15,16 +15,23 @@ public enum Direction
     none = -100
 }
 
+public enum MapClass
+{
+    unexplored,
+    walked
+}
+
 public enum FieldClass
 {
     wall,
     path,
     floor,
-    exit,
-    roomwallup,
-    roomwallright,
-    roomwalldown,
-    roomwallleft
+    exit
+}
+
+public enum Wall
+{
+    reaf
 }
 
 public enum Floor
@@ -32,15 +39,12 @@ public enum Floor
     rocktile
 }
 
-public enum Wall
+public enum Item
 {
-    reaf,
-    roomup,
-    roomupright,
-    roomright,
-    roomdownright,
-    roomdown,
-    roomdownleft,
-    roomleft,
-    roomupleft
+    potion
+}
+
+public enum EventTile
+{
+    poison
 }
