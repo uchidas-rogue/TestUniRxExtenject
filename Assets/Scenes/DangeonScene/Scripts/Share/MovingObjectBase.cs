@@ -23,11 +23,6 @@ public class MovingObjectBase : MonoBehaviour
         _animator = GetComponent<Animator> ();
     }
 
-    public void KillMoving ()
-    {
-        _transformCash.DOKill ();
-    }
-
     /// <summary>
     /// 実際に移動処理
     /// </summary>

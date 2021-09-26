@@ -4,26 +4,26 @@ using System.Text;
 using UnityEngine;
 using Zenject;
 
-public interface IMiniMapStringService
+public interface IMapStringService
 {
-    string MakeMiniMapString (int playerposx, int playerposy, bool isPickup = false);
+    string MakeMapString (int playerposx, int playerposy, bool isPickup = false);
 }
 
-public class MiniMapStringService : IMiniMapStringService
+public class MapStringService : IMapStringService
 {
-    [Inject]
     IDangeonFieldModel _dangeonFieldModel;
 
-    public MiniMapStringService (IDangeonFieldModel dfm)
+    public MapStringService (IDangeonFieldModel dfm)
     {
         _mapStringBuilder = new StringBuilder ();
+        _dangeonFieldModel = dfm;
     }
 
     int _cntX;
     int _cntY;
     StringBuilder _mapStringBuilder;
 
-    public string MakeMiniMapString (int playerposx, int playerposy, bool isPickup = false)
+    public string MakeMapString (int playerposx, int playerposy, bool isPickup = false)
     {
         if (_dangeonFieldModel.Field == null) { return ""; }
 

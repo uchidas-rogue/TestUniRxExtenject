@@ -12,31 +12,30 @@ public class PlayerPresenter : MonoBehaviour
     IMoveObjectServece _moveObjectSevice;
     IPlayerModel _playerModel;
     IDangeonFieldModel _dangeonFieldModel;
-    IMiniMapStringService _miniMapStringSevice;
+    IMapStringService _mapStringSevice;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IMoveObjectServece injectmos, IPlayerModel injectpm,
-        IDangeonFieldModel injectdfm, IMiniMapStringService injectmmss)
+    public void Constructor (IMoveObjectServece mos, IPlayerModel pm, IDangeonFieldModel dfm, IMapStringService mss)
     {
-        _moveObjectSevice = injectmos;
-        _playerModel = injectpm;
-        _dangeonFieldModel = injectdfm;
-        _miniMapStringSevice = injectmmss;
+        _moveObjectSevice = mos;
+        _playerModel = pm;
+        _dangeonFieldModel = dfm;
+        _mapStringSevice = mss;
     }
     #endregion // injection
 
     #region views
     PlayerView _playerView;
-    MiniMapView _miniMapView;
-    MainCameraView _mainCameraVeiw;
+    MapView _mapView;
     MoveButtonView[] _moveButtonView;
+    MainCameraView _mainCameraVeiw;
     MoveCameraButtonView _moveCameraButtonView;
 
     void Awake ()
     {
         _playerView = GetComponent<PlayerView> ();
-        _miniMapView = FindObjectOfType<MiniMapView> ();
+        _mapView = FindObjectOfType<MapView> ();
         _moveButtonView = FindObjectsOfType<MoveButtonView> ();
         _mainCameraVeiw = FindObjectOfType<MainCameraView> ();
         _moveCameraButtonView = FindObjectOfType<MoveCameraButtonView> ();
@@ -50,13 +49,13 @@ public class PlayerPresenter : MonoBehaviour
         _moveCameraButtonView.OnClick ()
             .Subscribe (_ =>
             {
-                if (_mainCameraVeiw.OffsetPosition == _mainCameraVeiw._offset1)
+                if (_mainCameraVeiw.OffsetPosition == _mainCameraVeiw.Offset1)
                 {
-                    _mainCameraVeiw.Rotation (_mainCameraVeiw._euler2, _mainCameraVeiw._offset2);
+                    _mainCameraVeiw.Rotation (_mainCameraVeiw.Euler2, _mainCameraVeiw.Offset2);
                 }
                 else
                 {
-                    _mainCameraVeiw.Rotation (_mainCameraVeiw._euler1, _mainCameraVeiw._offset1);
+                    _mainCameraVeiw.Rotation (_mainCameraVeiw.Euler1, _mainCameraVeiw.Offset1);
                 }
             });
 
@@ -107,8 +106,8 @@ public class PlayerPresenter : MonoBehaviour
                     // }
 
                     StartCheckWalkedTiles ((int) ppos.x, (int) ppos.z);
-                    _miniMapView.SetMiniMapText (
-                        _miniMapStringSevice.MakeMiniMapString (
+                    _mapView.SetMapText (
+                        _mapStringSevice.MakeMapString (
                             (int) ppos.x, (int) ppos.z
                         ));
                 }
@@ -120,14 +119,14 @@ public class PlayerPresenter : MonoBehaviour
             //.Where(_ => !_playerView.IsObjectMoving)
             .Subscribe (_ =>
             {
-                _mainCameraVeiw.Move (_playerView.GetPlayerPosition ());
+                _mainCameraVeiw.Move (_playerView.Position);
                 // 移動中はプレイヤー位置の設定を行わない
                 if (_playerView.IsObjectMoving) { return; }
 
                 tmpvec3.Set (
-                    _playerView.GetPlayerPosition ().x,
+                    _playerView.Position.x,
                     0,
-                    _playerView.GetPlayerPosition ().z
+                    _playerView.Position.z
                 );
                 _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
             });
@@ -207,7 +206,7 @@ public class PlayerPresenter : MonoBehaviour
     /// <param name="y"></param>
     void CheckWalkedTile (int x, int y)
     {
-        if (_dangeonFieldModel.Map[x, y] != MapClass.walked)
+        if (_dangeonFieldModel.Map[x, y] == MapClass.unexplored)
         { // チェックしてないタイルなら
             // チェック済にする
             _dangeonFieldModel.Map[x, y] = MapClass.walked;

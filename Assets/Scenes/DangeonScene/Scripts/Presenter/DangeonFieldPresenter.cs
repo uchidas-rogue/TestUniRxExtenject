@@ -21,31 +21,25 @@ public class DangeonFieldPresenter : MonoBehaviour
     #endregion // injection
 
     #region views
+
     DangeonFieldVeiw _dangeonFieldView;
-    ChangeFloorCanvasView _changeFloorCanvasView;
+    //ChangeFloorCanvasView _changeFloorCanvasView;
 
     void Awake ()
     {
         _dangeonFieldView = GetComponent<DangeonFieldVeiw> ();
-        _changeFloorCanvasView = FindObjectOfType<ChangeFloorCanvasView> ();
+        //_changeFloorCanvasView = FindObjectOfType<ChangeFloorCanvasView> ();
     }
     #endregion // views
-
-    [SerializeField]
-    public int FieldWidth;
-    [SerializeField]
-    public int FieldHeith;
-
-    private CancellationToken cancelToken;
 
     void Start ()
     {
         // Destoroy時にキャンセルされるtoken
-        cancelToken = this.GetCancellationTokenOnDestroy ();
+        var cancelToken = this.GetCancellationTokenOnDestroy ();
 
         _dangeonFieldModel.FloorNumRP
             .DoOnSubscribe (SetFieldSize)
-            .Subscribe (num => InitField (num));
+            .Subscribe (num => InitField (num, cancelToken));
 
         // Observable.Timer (System.TimeSpan.FromSeconds (2), System.TimeSpan.FromSeconds (4))
         //     .Subscribe (_ =>
@@ -90,7 +84,7 @@ public class DangeonFieldPresenter : MonoBehaviour
     }
     #endregion
 
-    async void InitField (int num)
+    async void InitField (int num, CancellationToken cancellationToken)
     {
         _dangeonFieldModel.IsFieldSetting = true;
         // 画面に設置済みのタイルを全て消す
@@ -100,10 +94,10 @@ public class DangeonFieldPresenter : MonoBehaviour
         // _changeFloorCanvasView.SetActiveAll (true);
         // _changeFloorCanvasView.SetFloorNumText ($"FloorNum:{num}");
 
-        using (var makeFieldSevice = new FieldService (FieldWidth, FieldHeith, 49, 49))
+        using (var makeFieldSevice = new FieldService (_dangeonFieldView.FieldWidth, _dangeonFieldView.FieldHeith, 49, 49))
         {
-            _dangeonFieldModel.Map = new MapClass[FieldWidth, FieldHeith];
-            _dangeonFieldModel.Field = await makeFieldSevice.MakeFieldAsync (num, cancelToken);
+            _dangeonFieldModel.Field = await makeFieldSevice.MakeFieldAsync (num, cancellationToken);
+            _dangeonFieldModel.Map = new MapClass[_dangeonFieldView.FieldWidth, _dangeonFieldView.FieldHeith];
         }
         // 画面に設置する
         SetField ();
@@ -120,11 +114,11 @@ public class DangeonFieldPresenter : MonoBehaviour
     void SetFieldSize ()
     {
         // NG size under 101
-        FieldWidth = FieldWidth < 101 ? 101 : FieldWidth;
-        FieldHeith = FieldHeith < 101 ? 101 : FieldHeith;
+        _dangeonFieldView.FieldWidth = _dangeonFieldView.FieldWidth < 101 ? 101 : _dangeonFieldView.FieldWidth;
+        _dangeonFieldView.FieldHeith = _dangeonFieldView.FieldHeith < 101 ? 101 : _dangeonFieldView.FieldHeith;
         // NG even number
-        FieldWidth = FieldWidth % 2 == 0 ? FieldWidth + 1 : FieldWidth;
-        FieldHeith = FieldHeith % 2 == 0 ? FieldHeith + 1 : FieldHeith;
+        _dangeonFieldView.FieldWidth = _dangeonFieldView.FieldWidth % 2 == 0 ? _dangeonFieldView.FieldWidth + 1 : _dangeonFieldView.FieldWidth;
+        _dangeonFieldView.FieldHeith = _dangeonFieldView.FieldHeith % 2 == 0 ? _dangeonFieldView.FieldHeith + 1 : _dangeonFieldView.FieldHeith;
     }
 
     void SetField ()

@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class DangeonFieldVeiw : MonoBehaviour
 {
+    [SerializeField]
+    public int FieldWidth;
+    [SerializeField]
+    public int FieldHeith;
+
     //floor prefab 
     [SerializeField]
     public GameObject[] FloorTiles;
@@ -12,7 +17,7 @@ public class DangeonFieldVeiw : MonoBehaviour
     public GameObject StairsTile;
     [SerializeField]
     public GameObject[] EventTiles;
-    
+
     [SerializeField]
     public GameObject[] Items;
 

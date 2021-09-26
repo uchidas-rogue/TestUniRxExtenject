@@ -5,25 +5,20 @@ using UnityEngine.EventSystems;
 
 public class MainCameraView : MonoBehaviour
 {
+    public Vector3 Offset1 { get; } = new Vector3 (0f, 4f, -4f);
+    public Vector3 Euler1 { get; } = new Vector3 (40f, 0f, 0f);
+    public Vector3 Offset2 { get; } = new Vector3 (0f, 6f, 0f);
+    public Vector3 Euler2 { get; } = new Vector3 (90f, 0f, 0f);
+
+    public Vector3 OffsetPosition { get => _offsetPosition; }
     Transform _transformCash;
     Vector3 _offsetPosition;
-
-    [System.NonSerialized]
-    public Vector3 _offset1 = new Vector3 (0f, 4f, -4f);
-    [System.NonSerialized]
-    public Vector3 _euler1 = new Vector3 (40f, 0f, 0f);
-    [System.NonSerialized]
-    public Vector3 _offset2 = new Vector3 (0f, 6f, 0f);
-    [System.NonSerialized]
-    public Vector3 _euler2 = new Vector3 (90f, 0f, 0f);
 
     void Awake ()
     {
         _transformCash = GetComponent<Transform> ();
-        _offsetPosition = _offset1;
+        _offsetPosition = Offset1;
     }
-
-    public Vector3 OffsetPosition { get => _offsetPosition; }
 
     public void Move (Vector3 pos)
     {

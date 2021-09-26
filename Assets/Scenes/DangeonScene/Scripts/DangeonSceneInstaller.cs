@@ -13,24 +13,17 @@ public class DangeonSceneInstaller : MonoInstaller
             .NonLazy ();
 
         Container
+            .Bind<IMapStringService> ()
+            .To<MapStringService> ()
+            .FromNew ()
+            .AsCached ()
+            .NonLazy ();
+
+        Container
             .Bind<IPlayerModel> ()
             .To<PlayerModel> ()
             .FromNew ()
             .AsSingle ()
-            .NonLazy ();
-
-        Container
-            .Bind<IMiniMapModel> ()
-            .To<MiniMapModel> ()
-            .FromNew ()
-            .AsSingle ()
-            .NonLazy ();
-
-        Container
-            .Bind<IMiniMapStringService> ()
-            .To<MiniMapStringService> ()
-            .FromNew ()
-            .AsCached ()
             .NonLazy ();
 
         Container

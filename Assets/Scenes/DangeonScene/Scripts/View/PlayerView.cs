@@ -5,6 +5,8 @@ public class PlayerView : MovingObjectBase
 {
     Vector3 _initPosVec3 = new Vector3 (49f, 0, 49f);
 
+    public Vector3 Position { get { return base._transformCash.position; } }
+
     protected override void Awake ()
     {
         base.Awake ();
@@ -16,8 +18,6 @@ public class PlayerView : MovingObjectBase
     }
 
     public void Move (Vector3 inputVec3) => base.AttemptMove (inputVec3);
-
-    public Vector3 GetPlayerPosition () => base._transformCash.position;
 
     public void CreateFovFloor (Vector3 ppos)
     {
