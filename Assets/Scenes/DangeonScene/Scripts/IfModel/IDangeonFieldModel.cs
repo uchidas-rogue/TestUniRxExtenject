@@ -25,4 +25,9 @@ public interface IDangeonFieldModel
     /// </summary>
     /// <value></value>
     MapClass[, ] Map { get; set; }
+    /// <summary>
+    /// アイテム
+    /// </summary>
+    /// <value></value>
+    ItemClass[, ] Item { get; set; }
 }

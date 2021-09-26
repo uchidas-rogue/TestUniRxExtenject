@@ -141,10 +141,11 @@ public class FieldService : IDisposable
     /// </summary>
     void CheckFloorPosition ()
     {
+        int i ,j;
         _floorPosList.Clear ();
-        for (int i = 0; i < (this._width - 1) / 2; i++)
+        for (i = 0; i < (this._width - 1) / 2; i++)
         {
-            for (int j = 0; j < (this._height - 1) / 2; j++)
+            for (j = 0; j < (this._height - 1) / 2; j++)
             {
                 if (Field[2 * i + 1, 2 * j + 1] != FieldClass.wall)
                 {
@@ -173,9 +174,10 @@ public class FieldService : IDisposable
 
     bool CheckAnyDigPosition ()
     {
-        for (int i = 0; i < (this._width - 1) / 2; i++)
+        int i ,j;
+        for (i = 0; i < (this._width - 1) / 2; i++)
         {
-            for (int j = 0; j < (this._height - 1) / 2; j++)
+            for (j = 0; j < (this._height - 1) / 2; j++)
             {
                 if (CheckCanDig (2 * i + 1, 2 * j + 1))
                 {
@@ -244,40 +246,15 @@ public class FieldService : IDisposable
         if (_roomEntryY % 2 == 1) { _roomEntryY--; }
     }
 
-    // int jfirst = -1;
-    // int jlast = -1;
-    // int ifirst = -1;
-    // int ilast = -1;
-
     void MakeRoomSub (int xroomdigstat, int yroomdigstat, int dirx, int diry)
     {
+        int i ,j;
 
-        // jfirst = (int) FieldClass.roomwalldown;
-        // jlast = (int) FieldClass.roomwallup;
-        // ifirst = (int) FieldClass.roomwallleft;
-        // ilast = (int) FieldClass.roomwallright;
-
-        // if (_direction == Direction.down)
-        // {
-        //     jfirst = (int) FieldClass.roomwallup;
-        //     jlast = (int) FieldClass.roomwalldown;
-        // }
-        // if (_direction == Direction.left)
-        // {
-        //     ifirst = (int) FieldClass.roomwallright;
-        //     ilast = (int) FieldClass.roomwallleft;
-        // }
-
-        for (int i = 0; i < _roomWidth; i++)
+        for (i = 0; i < _roomWidth; i++)
         {
-            for (int j = 0; j < _roomHeiht; j++)
+            for (j = 0; j < _roomHeiht; j++)
             {
                 Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = FieldClass.floor;
-
-                // if (j == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = jfirst;
-                // if (j == _roomHeiht - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = jlast;
-                // if (i == 0) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = ifirst;
-                // if (i == _roomWidth - 1) Field[xroomdigstat + (i * dirx), yroomdigstat + (j * diry)] = ilast;
             }
         }
     }
@@ -383,6 +360,37 @@ public class FieldService : IDisposable
             token.ThrowIfCancellationRequested ();
             return MakeField (floorNum);
         });
+    }
+
+    public ItemClass[,] SetItems()
+    {
+        var items = new ItemClass[_width,_height];
+        int i ,j;
+
+        _floorPosList.Clear ();
+        for (i = 0; i < _width ; i++)
+        {
+            for (j = 0; j < _height; j++)
+            {
+                if (Field[i, j] == FieldClass.floor)
+                {
+                    _floorPosList.Add (new int[2] { i, j});
+                }
+            }
+        }
+
+        int randomListNum = _random.Next (_floorPosList.Count);
+        if (_floorPosList.Count != 0)
+        {
+            items[_floorPosList[randomListNum][0],_floorPosList[randomListNum][1]] = ItemClass.potion;
+        }
+        randomListNum = _random.Next (_floorPosList.Count);
+        if (_floorPosList.Count != 0)
+        {
+            items[_floorPosList[randomListNum][0],_floorPosList[randomListNum][1]] = ItemClass.potion;
+        }
+
+        return items; 
     }
 
     #endregion // Method

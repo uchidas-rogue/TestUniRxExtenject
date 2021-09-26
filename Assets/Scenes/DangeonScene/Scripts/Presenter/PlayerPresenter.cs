@@ -133,15 +133,22 @@ public class PlayerPresenter : MonoBehaviour
 
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
         _playerView.OnTriggerStayAsObservable ()
-            .Select (collision => collision.tag)
+            //.Select (collision => collision.tag)
             .Where (_ => !_playerView.IsObjectMoving)
-            .Subscribe (tag =>
+            .Subscribe (collision =>
             {
-                switch (tag)
+                switch (collision.tag)
                 {
                     case "Stairs":
                         PlayerInit ();
                         _dangeonFieldModel.FloorNumRP.Value++;
+                        break;
+                    case "Potion":
+                        GameObject.Destroy(collision.gameObject);
+                        _dangeonFieldModel.Item[
+                            ((int)_playerModel.PlayerPositionVec3RP.Value.x),
+                            ((int)_playerModel.PlayerPositionVec3RP.Value.z)] = ItemClass.none;
+                        Debug.Log(_playerModel.PlayerPositionVec3RP.Value);
                         break;
                 }
             });

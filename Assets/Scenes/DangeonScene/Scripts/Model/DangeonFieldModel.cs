@@ -9,4 +9,5 @@ public class DangeonFieldModel : IDangeonFieldModel
     public bool IsFieldSetting { get; set; }
     public FieldClass[, ] Field { get; set; }
     public MapClass[, ] Map { get; set; }
+    public ItemClass[, ] Item { get; set; }
 }

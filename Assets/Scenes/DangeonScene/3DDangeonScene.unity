@@ -947,10 +947,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3132e951ae1407185bc777ef1c500e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset1: {x: 0, y: 4, z: -4}
-  _euler1: {x: 40, y: 0, z: 0}
-  _offset2: {x: 0, y: 6, z: 0}
-  _euler2: {x: 90, y: 0, z: 0}
 --- !u!1 &711554753
 GameObject:
   m_ObjectHideFlags: 0
@@ -1529,7 +1525,8 @@ MonoBehaviour:
   - {fileID: 241398888458754524, guid: 3ed6680b59175413ca2cc8aa85a5ed43, type: 3}
   StairsTile: {fileID: 2965260105685876617, guid: 2f3122b93d0ac4869b307dc37591e8a9, type: 3}
   EventTiles: []
-  Items: []
+  Items:
+  - {fileID: 2626239700214681114, guid: fda7e9fa82adf408b8e94671df244637, type: 3}
 --- !u!114 &1123719576
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -82,6 +82,17 @@ public class MapStringService : IMapStringService
         { //player position
             _mapStringBuilder.Append ("<color=yellow>●</color>");
         }
+        else if (_dangeonFieldModel.Item[x, y] == ItemClass.potion)
+        {
+            if (_dangeonFieldModel.Map[x, y] == MapClass.walked)
+            {
+                _mapStringBuilder.Append ("<color=red>■</color>");
+            }
+            else
+            {
+                _mapStringBuilder.Append ("   ");
+            }
+        }
         else if (_dangeonFieldModel.Field[x, y] == FieldClass.exit)
         { //exit position
             if (_dangeonFieldModel.Map[x, y] == MapClass.walked)

@@ -21,7 +21,7 @@ public class DangeonFieldVeiw : MonoBehaviour
     [SerializeField]
     public GameObject[] Items;
 
-    public void SetTile (GameObject tile, int x, int y, float z = 0)
+    public void SetTile (GameObject tile, Vector3 size, int x, int y, float z = 0)
     {
         // Clone the Tiles
         GameObject instance = Instantiate (
@@ -30,7 +30,7 @@ public class DangeonFieldVeiw : MonoBehaviour
             Quaternion.identity,
             transform) as GameObject;
         // Change size 
-        instance.transform.localScale = new Vector3 (1f, 1f, 1f);
+        instance.transform.localScale = size;
         //instance.transform.localRotation = Quaternion.Euler(90f,0,0);
     }
 

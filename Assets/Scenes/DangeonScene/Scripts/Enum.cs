@@ -26,25 +26,12 @@ public enum FieldClass
     wall,
     path,
     floor,
-    exit
+    exit,
+    action
 }
 
-public enum Wall
+public enum ItemClass
 {
-    reaf
-}
-
-public enum Floor
-{
-    rocktile
-}
-
-public enum Item
-{
+    none,
     potion
-}
-
-public enum EventTile
-{
-    poison
 }

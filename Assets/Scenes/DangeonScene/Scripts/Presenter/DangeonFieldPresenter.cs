@@ -98,9 +98,11 @@ public class DangeonFieldPresenter : MonoBehaviour
         {
             _dangeonFieldModel.Field = await makeFieldSevice.MakeFieldAsync (num, cancellationToken);
             _dangeonFieldModel.Map = new MapClass[_dangeonFieldView.FieldWidth, _dangeonFieldView.FieldHeith];
+            _dangeonFieldModel.Item = makeFieldSevice.SetItems();
         }
         // 画面に設置する
         SetField ();
+        SetItems ();
         // テスト用 ミニマップを全部表示
         //StartCheckWalkedTilesTest (49, 49);
 
@@ -113,36 +115,60 @@ public class DangeonFieldPresenter : MonoBehaviour
 
     void SetFieldSize ()
     {
-        // NG size under 101
-        _dangeonFieldView.FieldWidth = _dangeonFieldView.FieldWidth < 101 ? 101 : _dangeonFieldView.FieldWidth;
-        _dangeonFieldView.FieldHeith = _dangeonFieldView.FieldHeith < 101 ? 101 : _dangeonFieldView.FieldHeith;
+        int width = _dangeonFieldView.FieldWidth;
+        int heith = _dangeonFieldView.FieldHeith;
         // NG even number
-        _dangeonFieldView.FieldWidth = _dangeonFieldView.FieldWidth % 2 == 0 ? _dangeonFieldView.FieldWidth + 1 : _dangeonFieldView.FieldWidth;
-        _dangeonFieldView.FieldHeith = _dangeonFieldView.FieldHeith % 2 == 0 ? _dangeonFieldView.FieldHeith + 1 : _dangeonFieldView.FieldHeith;
+        _dangeonFieldView.FieldWidth = width % 2 == 0 ? width + 1 : width;
+        _dangeonFieldView.FieldHeith = heith % 2 == 0 ? heith + 1 : heith;
+
+        width = _dangeonFieldView.FieldWidth;
+        heith = _dangeonFieldView.FieldHeith;
+        // NG size under 101
+        _dangeonFieldView.FieldWidth = width < 101 ? 101 : width;
+        _dangeonFieldView.FieldHeith = heith < 101 ? 101 : heith;
     }
 
     void SetField ()
     {
-        for (int x = 0; x < _dangeonFieldModel.Field.GetLength (0); x++)
+        int x = 0, y = 0;
+        for (x = 0; x < _dangeonFieldModel.Field.GetLength (0); x++)
         {
-            for (int y = 0; y < _dangeonFieldModel.Field.GetLength (1); y++)
+            for (y = 0; y < _dangeonFieldModel.Field.GetLength (1); y++)
             {
                 switch (_dangeonFieldModel.Field[x, y])
                 {
                     case FieldClass.wall:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[(int) Wall.reaf], x, y, 0.8f);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.WallTiles[0], Vector3.one, x, y, 0.8f);
                         break;
                     case FieldClass.path:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
-                        break;
                     case FieldClass.floor:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[0], Vector3.one, x, y);
                         break;
                     case FieldClass.exit:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.StairsTile, x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.StairsTile, Vector3.one, x, y);
                         break;
                     default:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[(int) Floor.rocktile], x, y);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.FloorTiles[0], Vector3.one, x, y);
+                        break;
+                }
+            }
+        }
+    }
+
+    void SetItems ()
+    {
+        int x = 0, y = 0;
+        for (x = 0; x < _dangeonFieldModel.Item.GetLength (0); x++)
+        {
+            for (y = 0; y < _dangeonFieldModel.Item.GetLength (1); y++)
+            {
+                switch (_dangeonFieldModel.Item[x, y])
+                {
+                    case ItemClass.potion:
+                        _dangeonFieldView.SetTile (_dangeonFieldView.Items[0], Vector3.one * 2, x, y, 0.2f);
+                        break;
+                    default:
+                        //_dangeonFieldView.SetTile (_dangeonFieldView.Items[0], x, y);
                         break;
                 }
             }
