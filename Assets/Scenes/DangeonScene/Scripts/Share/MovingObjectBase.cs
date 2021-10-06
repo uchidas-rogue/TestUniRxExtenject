@@ -32,13 +32,11 @@ public class MovingObjectBase : MonoBehaviour
         if ((_transformCash.position + inpVec3) != Vector3.zero)
         {
             IsObjectMoving = true;
-            _animator.SetInteger("State",1);
             _transformCash
                 .DOMove (_transformCash.position + inpVec3, MoveTime)
                 .OnComplete (() =>
                 {
                     IsObjectMoving = false;
-                    _animator.SetInteger("State",0);
                 });
         }
     }

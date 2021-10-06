@@ -20,4 +20,10 @@ public interface IPlayerModel
     /// </summary>
     /// <value></value>
     Vector3ReactiveProperty PlayerPositionVec3RP { get; set; }
+    /// <summary>
+    /// Playaerのもつアイテムのリスト
+    /// </summary>
+    /// <value></value>
+    List<ItemClass> ItemList { get; set; }
+    Vector3 InitPosVec3 { get; set; }
 }

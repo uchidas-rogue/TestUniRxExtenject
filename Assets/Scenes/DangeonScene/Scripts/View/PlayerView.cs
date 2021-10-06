@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class PlayerView : MovingObjectBase
 {
-    Vector3 _initPosVec3 = new Vector3 (49f, 0, 49f);
-
     public Vector3 Position { get { return base._transformCash.position; } }
 
     protected override void Awake ()
@@ -12,9 +10,15 @@ public class PlayerView : MovingObjectBase
         base.Awake ();
     }
 
-    public void InitPosition ()
+    public void SetPosition (Vector3 pos)
     {
-        base._transformCash.position = _initPosVec3;
+        base._transformCash.position = pos;
+    }
+
+    int _stateId = Animator.StringToHash("State");
+    public void SetAnimation(int State)
+    {
+        _animator.SetInteger (_stateId, State);
     }
 
     public void Move (Vector3 inputVec3) => base.AttemptMove (inputVec3);

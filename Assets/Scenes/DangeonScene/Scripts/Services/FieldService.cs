@@ -9,6 +9,8 @@ public class FieldService : IDisposable
     {
         _width = fieldWidth;
         _height = fieldHeight;
+        _initX = digX;
+        _initY = digY;
         _x = digX;
         _y = digY;
         Field = new FieldClass[fieldWidth, fieldHeight];
@@ -21,6 +23,8 @@ public class FieldService : IDisposable
     int _width;
     int _height;
     Direction _direction = Direction.right;
+    int _initX;
+    int _initY;
     int _x;
     int _y;
     int _roomWidth;
@@ -141,7 +145,7 @@ public class FieldService : IDisposable
     /// </summary>
     void CheckFloorPosition ()
     {
-        int i ,j;
+        int i, j;
         _floorPosList.Clear ();
         for (i = 0; i < (this._width - 1) / 2; i++)
         {
@@ -174,7 +178,7 @@ public class FieldService : IDisposable
 
     bool CheckAnyDigPosition ()
     {
-        int i ,j;
+        int i, j;
         for (i = 0; i < (this._width - 1) / 2; i++)
         {
             for (j = 0; j < (this._height - 1) / 2; j++)
@@ -248,7 +252,7 @@ public class FieldService : IDisposable
 
     void MakeRoomSub (int xroomdigstat, int yroomdigstat, int dirx, int diry)
     {
-        int i ,j;
+        int i, j;
 
         for (i = 0; i < _roomWidth; i++)
         {
@@ -311,7 +315,7 @@ public class FieldService : IDisposable
         return _stairsSuggestList.Count != 0;
     }
 
-    public FieldClass[, ] MakeField (int floorNum)
+    public FieldClass[, ] MakeField (int floorNum, CancellationToken token)
     {
         // 最初の一部屋を作る
         if (CheckCanMakeRoom ())
@@ -325,6 +329,9 @@ public class FieldService : IDisposable
         int cnt = 0;
         while (cnt < (floorNum * 2 + 30) * floorNum)
         {
+            // 実行前にキャンセル確認
+            token.ThrowIfCancellationRequested ();
+
             ChangeDir ();
             ChangeroomSize ();
             ChangeroomEntry ();
@@ -345,8 +352,11 @@ public class FieldService : IDisposable
         }
 
         if (!MakeStairs ())
-        { // 階段無ければもう一回作り直す
-            MakeField (floorNum);
+        {
+            // 実行前にキャンセル確認
+            token.ThrowIfCancellationRequested ();
+            // 階段無ければもう一回作り直す
+            MakeField (floorNum, token);
         }
 
         return Field;
@@ -358,39 +368,62 @@ public class FieldService : IDisposable
         {
             // 実行前にキャンセル確認
             token.ThrowIfCancellationRequested ();
-            return MakeField (floorNum);
+            return MakeField (floorNum, token);
         });
     }
 
-    public ItemClass[,] SetItems()
+    public ItemClass[, ] SetItems (int floorNum, CancellationToken token)
     {
-        var items = new ItemClass[_width,_height];
-        int i ,j;
+        var items = new ItemClass[_width, _height];
+        int i, j;
 
         _floorPosList.Clear ();
-        for (i = 0; i < _width ; i++)
+        for (i = 0; i < _width; i++)
         {
+            // 実行前にキャンセル確認
+            token.ThrowIfCancellationRequested ();
             for (j = 0; j < _height; j++)
             {
                 if (Field[i, j] == FieldClass.floor)
                 {
-                    _floorPosList.Add (new int[2] { i, j});
+                    _floorPosList.Add (new int[2] { i, j });
                 }
             }
         }
 
-        int randomListNum = _random.Next (_floorPosList.Count);
-        if (_floorPosList.Count != 0)
+        int randomListNum = 0, randomTmp = 0;
+
+        for (i = 0; i < floorNum; i++)
         {
-            items[_floorPosList[randomListNum][0],_floorPosList[randomListNum][1]] = ItemClass.potion;
-        }
-        randomListNum = _random.Next (_floorPosList.Count);
-        if (_floorPosList.Count != 0)
-        {
-            items[_floorPosList[randomListNum][0],_floorPosList[randomListNum][1]] = ItemClass.potion;
+            while (true)
+            {
+                // 実行前にキャンセル確認
+                token.ThrowIfCancellationRequested ();
+                randomTmp = _random.Next (_floorPosList.Count);
+                if (randomListNum != randomTmp &&
+                 (_floorPosList[randomTmp][0] != _initX && _floorPosList[randomTmp][1] != _initY))
+                {// 前の値と違う、プレイヤー位置と異なる
+                    break;
+                }
+            }
+            randomListNum = randomTmp;
+            if (_floorPosList.Count != 0)
+            {
+                items[_floorPosList[randomListNum][0], _floorPosList[randomListNum][1]] = ItemClass.potion;
+            }
         }
 
-        return items; 
+        return items;
+    }
+
+    public async UniTask<ItemClass[, ]> SetItemsAsync (int floorNum, CancellationToken token)
+    {
+        return await UniTask.Run (() =>
+        {
+            // 実行前にキャンセル確認
+            token.ThrowIfCancellationRequested ();
+            return SetItems (floorNum, token);
+        });
     }
 
     #endregion // Method

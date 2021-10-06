@@ -62,23 +62,22 @@ public class PlayerPresenter : MonoBehaviour
         // button onclick register
         foreach (var _moveBtn in _moveButtonView)
         {
-            // _moveBtn.movebutton_OnUp ()
-            //     .Where (_ => !_playerview.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting.Value)
-            //     .Subscribe (_ =>
-            //     {
-            //         _playerModel.ChangeVec3 (_moveBtn.vectorX, _moveBtn.vectorY);
-            //     });
+            _moveBtn.movebutton_OnUp ()
+                .Subscribe (_ =>
+                {
+                    _playerView.SetAnimation (0);
+                });
 
             _moveBtn.movebutton_OnDown ()
                 .SelectMany (_moveBtn.UpdateAsObservable ())
                 .Where (_ => !_playerView.IsObjectMoving && !_dangeonFieldModel.IsFieldSetting)
-                // .DoOnCompleted (() =>
-                // {
-                //     Debug.Log ("released!");
-                // })
                 .TakeUntil (_moveBtn.movebutton_OnUp ())
                 .RepeatUntilDestroy (_moveBtn.gameObject)
-                .Subscribe (_ => SetPlayerInputVec (_moveBtn.VectorX, _moveBtn.VectorY));
+                .Subscribe (_ =>
+                {
+                    SetPlayerInputVec (_moveBtn.VectorX, _moveBtn.VectorY);
+                    _playerView.SetAnimation (1);
+                });
         }
 
         // PlayerInputVec3RPの変更によって呼び出すように登録する
@@ -131,26 +130,35 @@ public class PlayerPresenter : MonoBehaviour
                 _playerModel.PlayerPositionVec3RP.Value = tmpvec3;
             });
 
+        _playerView.OnTriggerEnterAsObservable ()
+            .Select (collision => collision.gameObject)
+            .Where (colobj => colobj.CompareTag ("Item"))
+            .Subscribe (colobj =>
+            {
+
+                _playerModel.ItemList.Add (
+                    _dangeonFieldModel.Item[
+                        ((int) colobj.transform.position.x),
+                        ((int) colobj.transform.position.z)]
+                );
+                _dangeonFieldModel.Item[
+                    ((int) colobj.transform.position.x),
+                    ((int) colobj.transform.position.z)] = ItemClass.none;
+
+                GameObject.Destroy (colobj);
+
+                _playerModel.ItemList.ForEach (i => Debug.Log (i));
+                Debug.Log ("==================");
+            });
+
         // unirxでの衝突時の処理の登録 unirx.triggersをusingする
         _playerView.OnTriggerStayAsObservable ()
-            //.Select (collision => collision.tag)
-            .Where (_ => !_playerView.IsObjectMoving)
+            .Select (collision => collision.gameObject)
+            .Where (colobj => colobj.CompareTag ("Stairs") && !_playerView.IsObjectMoving)
             .Subscribe (collision =>
             {
-                switch (collision.tag)
-                {
-                    case "Stairs":
-                        PlayerInit ();
-                        _dangeonFieldModel.FloorNumRP.Value++;
-                        break;
-                    case "Potion":
-                        GameObject.Destroy(collision.gameObject);
-                        _dangeonFieldModel.Item[
-                            ((int)_playerModel.PlayerPositionVec3RP.Value.x),
-                            ((int)_playerModel.PlayerPositionVec3RP.Value.z)] = ItemClass.none;
-                        Debug.Log(_playerModel.PlayerPositionVec3RP.Value);
-                        break;
-                }
+                PlayerInit ();
+                _dangeonFieldModel.FloorNumRP.Value++;
             });
         // reload scene
         // SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex, LoadSceneMode.Single);
@@ -190,7 +198,7 @@ public class PlayerPresenter : MonoBehaviour
     /// </summary>
     void PlayerInit ()
     {
-        _playerView.InitPosition ();
+        _playerView.SetPosition (_playerModel.InitPosVec3);
         _playerModel.PlayerInputVec3RP.Value = Vector3.zero;
     }
 

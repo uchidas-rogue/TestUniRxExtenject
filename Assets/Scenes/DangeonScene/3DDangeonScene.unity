@@ -2353,6 +2353,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Haruko
       objectReference: {fileID: 0}
+    - target: {fileID: 8107431254601461983, guid: 94935ebcf801d4be7b2cef5aad2afd29, type: 3}
+      propertyPath: m_Size.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107431254601461983, guid: 94935ebcf801d4be7b2cef5aad2afd29, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107431254601461983, guid: 94935ebcf801d4be7b2cef5aad2afd29, type: 3}
+      propertyPath: m_Size.z
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8107431254601461983, guid: 94935ebcf801d4be7b2cef5aad2afd29, type: 3}
+      propertyPath: m_Center.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8107431254601591412, guid: 94935ebcf801d4be7b2cef5aad2afd29, type: 3}
       propertyPath: m_RootOrder
       value: 3

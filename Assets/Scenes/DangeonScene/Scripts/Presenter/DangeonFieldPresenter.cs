@@ -11,12 +11,14 @@ public class DangeonFieldPresenter : MonoBehaviour
 {
     #region injection
     IDangeonFieldModel _dangeonFieldModel;
+    IPlayerModel _playerModel;
 
     // zenjectによるDI、コンストラクタっぽく書くとエラーがでるらしい
     [Inject]
-    public void Constructor (IDangeonFieldModel injectdfm)
+    public void Constructor (IDangeonFieldModel dfm, IPlayerModel pm)
     {
-        _dangeonFieldModel = injectdfm;
+        _dangeonFieldModel = dfm;
+        _playerModel = pm;
     }
     #endregion // injection
 
@@ -94,11 +96,13 @@ public class DangeonFieldPresenter : MonoBehaviour
         // _changeFloorCanvasView.SetActiveAll (true);
         // _changeFloorCanvasView.SetFloorNumText ($"FloorNum:{num}");
 
-        using (var makeFieldSevice = new FieldService (_dangeonFieldView.FieldWidth, _dangeonFieldView.FieldHeith, 49, 49))
+        using (var makeFieldSevice = new FieldService (
+            _dangeonFieldView.FieldWidth, _dangeonFieldView.FieldHeith, 
+            (int)_playerModel.InitPosVec3.x, (int)_playerModel.InitPosVec3.z))
         {
             _dangeonFieldModel.Field = await makeFieldSevice.MakeFieldAsync (num, cancellationToken);
             _dangeonFieldModel.Map = new MapClass[_dangeonFieldView.FieldWidth, _dangeonFieldView.FieldHeith];
-            _dangeonFieldModel.Item = makeFieldSevice.SetItems();
+            _dangeonFieldModel.Item = await makeFieldSevice.SetItemsAsync (num+10, cancellationToken);
         }
         // 画面に設置する
         SetField ();
@@ -165,10 +169,10 @@ public class DangeonFieldPresenter : MonoBehaviour
                 switch (_dangeonFieldModel.Item[x, y])
                 {
                     case ItemClass.potion:
-                        _dangeonFieldView.SetTile (_dangeonFieldView.Items[0], Vector3.one * 2, x, y, 0.2f);
+                        _dangeonFieldView.SetTile (_dangeonFieldView.Items[0], Vector3.one * 2, x, y, 0f);
                         break;
                     default:
-                        //_dangeonFieldView.SetTile (_dangeonFieldView.Items[0], x, y);
+                        //_dangeonFieldView.SetTile (_dangeonFieldView.Items[0], Vector3.one * 2, x, y, 0.2f);
                         break;
                 }
             }
