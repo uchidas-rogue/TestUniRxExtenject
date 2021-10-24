@@ -7,8 +7,8 @@ using UnityEngine.EventSystems;
 public class MapView : MonoBehaviour
 {
     public Vector3 PickedMapPositionVec3 { get; } = new Vector3 (0f, 0f, 0f);
-    public Vector2 PickedMapSizeVec2 { get; } = new Vector2 (2220f, 1040f);
-    public Vector3 MapPositionVec3 { get; } = new Vector3 (-780f, 300f, 0f);
+    public Vector2 PickedMapSizeVec2 { get; } = new Vector2 (1920f, 1080f);
+    public Vector3 MapPositionVec3 { get; } = new Vector3 (-665f, 315f, 0f);
     public Vector2 MapSizeVec2 { get; } = new Vector2 (520f, 380f);
 
     public Vector2 MapSize { get { return _mapRect.sizeDelta; } }
